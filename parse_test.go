@@ -41,3 +41,22 @@ func TestGetTagName(t *testing.T) {
 
 }
 
+func TestIsClosingTag(t *testing.T) {
+	x:="<a href=\"https://example.com\">"
+
+	isClose := isClosing(x)
+
+	if isClose == true {
+		t.Errorf("TestIsClosingTag err  %v",isClose)
+
+	}
+
+	x = "</a>"
+	isClose = isClosing(x)
+	if isClose == false { 
+		t.Errorf("TestIsClosingTag err  %v",isClose)
+
+	}
+
+}
+

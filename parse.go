@@ -27,3 +27,13 @@ func getTagName(html string) string {
 
 	return tagName
 }	
+
+
+//isClosing is close tag
+func isClosing(html string) bool{
+	if len(html) < 2 {
+		return false
+	}
+	
+	return html[0:2] == "</"
+}
