@@ -60,3 +60,24 @@ func TestIsClosingTag(t *testing.T) {
 
 }
 
+
+func TestStripQuoteWrap(t *testing.T) {
+	x :="'asdfasdfadfafd'"
+
+	result := stripQuoteWrap(x)
+
+	if result != "asdfasdfadfafd" {
+		t.Errorf("TestStripQuoteWrap err  %v",result)
+
+	}
+
+	x ="\"asdfasdfadfafd\""
+
+	result = stripQuoteWrap(x)
+
+	if result != "asdfasdfadfafd" {
+		t.Errorf("TestStripQuoteWrap err  %v",result)
+
+	}
+}
+

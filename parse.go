@@ -34,6 +34,25 @@ func isClosing(html string) bool{
 	if len(html) < 2 {
 		return false
 	}
-	
+
 	return html[0:2] == "</"
+}
+
+//isQuoteWrapString
+func isQuoteWrapString(text string) bool {
+
+	f := text[0:1]
+	e := text[len(text)-1:]
+	if (f == "\"" && e == "\"") || (f == "'" && e == "'") {
+		return true
+	}
+	return false
+}
+
+//stripQuoteWrap
+func stripQuoteWrap(text string) string {
+	if isQuoteWrapString(text) {
+		return text[1:len(text)-1]
+	}
+	return text
 }
