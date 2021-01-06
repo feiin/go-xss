@@ -8,6 +8,8 @@ import (
 
 var reg = regexp.MustCompile("\\s|\\n|\\t")
 var regComment = regexp.MustCompile("<!--[\\s\\S]*?-->")
+var regLT = regexp.MustCompile("<")
+var regGT = regexp.MustCompile(">")
 //spaceIndex get the pos of first space
 func spaceIndex(str string) int {
 	locs := reg.FindStringIndex(str)
