@@ -272,6 +272,7 @@ func SafeAttrValue(tag, name, value string) string {
 			}
 		}
 
+		//TODO:FilterCSS
 
 	}
 
