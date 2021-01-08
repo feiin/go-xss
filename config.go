@@ -1,6 +1,11 @@
 package xss
 
 
+import (
+	"strconv"
+	"strings"
+	// "fmt"
+)
 type Config struct {
 
 	//remove invisible characters
@@ -11,6 +16,8 @@ type Config struct {
 
 	// StripIgnoreTagBody
 	StripIgnoreTagBody []string
+
+	WhiteList map[string][]string
 
 
 }
@@ -118,6 +125,10 @@ func OnIgnoreTag(tag, html string, options TagOption) *string {
 	return nil
 }
 
+func OnIgnoreTagAttr(tag,name, value string,isWhiteAttr bool) *string {
+	return nil
+}
+
 func ScapeHtml(html string) string {
 	return regGT.ReplaceAllString(regLT.ReplaceAllString(html,"&lt;"),"&gt;")
 }
@@ -157,14 +168,15 @@ func StripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 					removeList = append(removeList,[]int{posStart,end})
 				}
 
-				posStart = -1;
-				return ret;
+				posStart = -1
+				return &ret
 			} 
 
 			if posStart != -1 {
 				posStart = options.Position
 			}
-			return "[removed]"
+			ret := "[removed]"
+			return &ret
 
 		}
 		return next(tag,html, options)
@@ -185,13 +197,167 @@ func StripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 
 	return result
 	
-	
-
-
-
 }
 
 
+func isSafeLinkValue(value string) bool {
+
+	vl :=len(value)
+	if vl == 0 {
+		return true
+	}
+
+	if value[0] == '#' || value[0] == '/' {
+		return true
+	}
+
+	if vl >= 2 && value[0:2] == "./" {
+		return true
+	}
+
+	if vl >= 3 && value[0:3] == "../" {
+		return true
+	}
+
+	if vl >= 4 && value[0:4] == "tel:" {
+		return true
+	}
+
+	if vl >= 6 && value[0:6] == "ftp:" {
+		return true
+	}
+
+
+	if vl >= 7 && (value[0:7] == "http://" || value[0:7] == "mailto:")  {
+		return true
+	}
+
+	if vl >= 9 && (value[0:8] == "https://")  {
+		return true
+	}
+
+	if vl >= 11 && (value[0:11] == "data:image/")  {
+		return true
+	}
+
+	return false
+}
+
 func SafeAttrValue(tag, name, value string) string {
 
+	value = friendlyAttrValue(value)
+	if name == "href" || name == "src" { 
+
+		value = strings.TrimSpace(value)
+		if value == "#" {
+			return "#"
+		}
+
+ 
+		if !isSafeLinkValue(value) {
+			return ""
+		}
+
+	} else if  name == "background" && regDefaultOnTagAttr4.MatchString(value) {
+		return ""
+	} else if name == "style" {
+
+		if regDefaultOnTagAttr7.MatchString(value) {
+			return ""
+		}
+
+		if regDefaultOnTagAttr8.MatchString(value) {
+			if regDefaultOnTagAttr4.MatchString(value) {
+				return ""
+			}
+		}
+
+
+	}
+
+	value = EscapeAttrValue(value)
+	return value
+}
+
+//friendlyAttrValue get friendly attribute value
+func friendlyAttrValue(str string) string {
+ 	str = UnescapeQuote(str)
+	str = EscapeHtmlEntities(str)
+	str = EscapeDangerHtml5Entities(str)
+	str = ClearNonPrintableCharacter(str)
+	return str
+}
+
+
+//UnescapeQuote unescape double quote 
+func UnescapeQuote(str string) string {
+	return regQuote2.ReplaceAllString(str,"\"")
+}
+
+//EscapeHtmlEntities
+func EscapeHtmlEntities(str string) string {
+	return regAttrValue1.ReplaceAllStringFunc(str, func(input string) string {
+		input = input[2:]
+
+		if input[len(input)-1] == ';' {
+			input = input[:len(input)-1]
+		}
+
+		if input[0] == 'x' || input[0] == 'X' {
+			i,err := strconv.ParseInt(input[1:],16,32)
+			if err == nil {
+
+				return string(i)
+			}
+			return ""
+			
+		}
+		i,err := strconv.Atoi(input)
+		if err == nil {
+			return string(i)
+		}
+
+		return ""
+	})
+}
+
+//EscapeDangerHtml5Entities
+func EscapeDangerHtml5Entities(str string) string {
+   return regAttrNewLine.ReplaceAllString(regAttrValueColon.ReplaceAllString(str,":")," ")
+}
+
+//ClearNonPrintableCharacter
+func ClearNonPrintableCharacter(str string) string {
+	chs := []rune(str)
+ 
+	result := []rune{}
+
+	for _, item := range chs {
+
+		if item < 32 {
+			result= append(result,rune(' '))
+		} else {
+			result= append(result,item)
+		}
+
+	}
+
+	return strings.TrimSpace(string(result))
+}
+
+
+func EscapeQuote(str string) string {
+	return regQuote.ReplaceAllString(str,"&quot;")
+}
+
+func EscapeHtml(html string) string {
+	return regGT.ReplaceAllString(regLT.ReplaceAllString(html,"&lt;"),"&gt;")
+}
+
+
+func EscapeAttrValue(str string) string {
+	str = EscapeQuote(str)
+	str = EscapeHtml(str)
+
+	return str
 }

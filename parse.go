@@ -16,6 +16,9 @@ var regEmtpy = regexp.MustCompile("\\s|\\n|\\t")
 //getTagName get tag name
 func getTagName(html string) string {
 
+	if len(html) <=2 {
+		return ""
+	}
 	var tagName = ""
 	i := spaceIndex(html)
 	if i == -1 {
@@ -26,7 +29,11 @@ func getTagName(html string) string {
 
 	tagName = strings.ToLower(strings.TrimSpace(tagName))
 
-	if tagName[0:1] == "/" {
+	if len(tagName) <2 {
+		return tagName
+	}
+
+	if tagName[0:1] == "/" && len(tagName) >=2 {
 		tagName = tagName[1:]
 	}
 

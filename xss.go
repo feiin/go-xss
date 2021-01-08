@@ -5,6 +5,7 @@ import (
 	// "bytes"
 	"strings"
 	"github.com/feiin/pkg/arrays"
+	// "fmt"
 	// "io"
 )
 
@@ -14,8 +15,11 @@ type Xss struct {
 }
 
 //NewXss 
-func NewXss() *Xss {
-	return &Xss{}
+func NewXss(options Config) *Xss {
+	return &Xss{
+		options: &options,
+		
+	}
 }
 
 type AttrResult struct {
@@ -31,7 +35,7 @@ func GetAttrs(html string) AttrResult {
 			Closing: html[len(html)-2] == '/',
 		}
 	}
-	html = strings.TrimSpace(html[i+1:])
+	html = strings.TrimSpace(html[i+1:len(html)-1])
 
 	isClosing := html[len(html)-1] == '/'
 
@@ -40,7 +44,7 @@ func GetAttrs(html string) AttrResult {
 	}
 	return AttrResult {
 		Html:html,
-		Closing:isClosing
+		Closing:isClosing,
 	}
 
 } 
@@ -53,8 +57,13 @@ func (x *Xss) Process(html string) (string) {
 		return html
 	}
 
+	if x.options.WhiteList != nil {
+		whiteList = x.options.WhiteList
+	}
+
+
 	onIgnoreTag := OnIgnoreTag
-	scapeHtml := ScapeHtml
+	escapeHtml := EscapeHtml
 	onTag := OnTag
 	onTagAttr := OnTagAttr
   	//remove invisible characters
@@ -63,13 +72,14 @@ func (x *Xss) Process(html string) (string) {
 	}
 
 	// remove html comments
-	if x.options.AllowCommentTag {
+	if !x.options.AllowCommentTag {
 		html = stripCommentTag(html)
 	}
 
 	// if enable stripIgnoreTagBody
+	var stripIgnoreTagBody StripTagBodyResult
 	if x.options.StripIgnoreTagBody != nil {
-		var stripIgnoreTagBody = StripTagBody( x.options.StripIgnoreTagBody, onIgnoreTag)
+		stripIgnoreTagBody = StripTagBody( x.options.StripIgnoreTagBody, onIgnoreTag)
 		onIgnoreTag = stripIgnoreTagBody.OnIgnoreTag
 	}
 
@@ -106,7 +116,7 @@ func (x *Xss) Process(html string) (string) {
 			}
 
 			attrsHtml := parseAttr(attrs.Html, func(name,value string) string{
-				isWhiteAttr = arrays.ContainsString(whiteAttrList, name) != -1
+				isWhiteAttr := arrays.ContainsString(whiteAttrList, name) != -1
 
 				ret := onTagAttr(tag, name, value)
 
@@ -115,23 +125,48 @@ func (x *Xss) Process(html string) (string) {
 				}
 
 				if isWhiteAttr {
+					value = SafeAttrValue(tag,name, value)
+					if len(value) > 0 {
+						return name + "=\""+value+"\""
+					} else {
+						return name
+					}
+				} else {
+					ret := OnIgnoreTagAttr(tag,name,value, isWhiteAttr)
+					if ret != nil {
+						return *ret
+					}
+					return ""
 					
 				}
-			})
+ 			})
 
+			html := "<"+tag
+			if len(attrsHtml) > 0 {
+				html += " "+attrsHtml
+			}
 
+			if attrs.Closing {
+				html += " /"
+			}
+
+			html += ">"
+			return html
+		} else {
+			ret := onIgnoreTag(tag,html ,info)
+			if ret != nil {
+				return *ret
+			}
+			return escapeHtml(html);
 		}
 
-		return ""
-
-	}, scapeHtml)
+	}, escapeHtml)
 
 
+	if x.options.StripIgnoreTagBody != nil {
+		retHtml = stripIgnoreTagBody.Remove(retHtml)
+	}
 
-
-
-
-
-	return ""
+	return retHtml
 }
 
