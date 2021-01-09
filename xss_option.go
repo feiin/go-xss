@@ -255,7 +255,7 @@ func isSafeLinkValue(value string) bool {
 		return true
 	}
 
-	if vl >= 6 && value[0:6] == "ftp:" {
+	if vl >= 6 && value[0:6] == "ftp://" {
 		return true
 	}
 
@@ -334,9 +334,9 @@ func escapeHTMLEntities(str string) string {
 		}
 
 		if input[0] == 'x' || input[0] == 'X' {
+
 			i, err := strconv.ParseInt(input[1:], 16, 32)
 			if err == nil {
-
 				return string(i)
 			}
 			return ""

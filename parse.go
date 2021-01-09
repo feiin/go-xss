@@ -160,9 +160,10 @@ func parseAttr(html string, onAttr onAttrFunc) string {
 		if tmpName != "" {
 
 			if i == lastPos && (c == "\"" || c == "'") && html[i-1:i] == "=" {
-				j = strings.Index(html[i+1:], c)
-				j = i + 1 + j
-				if j == -1 {
+				tmpIndex := strings.Index(html[i+1:], c)
+
+				j = i + 1 + tmpIndex
+				if tmpIndex == -1 {
 					break
 				} else {
 

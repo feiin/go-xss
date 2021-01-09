@@ -192,21 +192,21 @@ func TestParseAttr(t *testing.T) {
 }
 
 func TestFindBeforeEqual(t *testing.T) {
-	i := findNextEqual("<a>",20)
+	i := findBeforeEqual("<a>", 1)
 	if i != -1 {
-		t.Errorf("findNextEqual error %d",i)
+		t.Errorf("findNextEqual error %d", i)
 	}
 }
 
 func TestFindNextEqual(t *testing.T) {
-	i := findNextEqual("<a>",0)
+	i := findNextEqual("<a>", 3)
 	if i != -1 {
-		t.Errorf("findNextEqual error %d",i)
+		t.Errorf("findNextEqual error %d", i)
 	}
 }
 
 func TestIsClosing(t *testing.T) {
-	i := isClosing("<a")
+	i := isClosing("a")
 	if i != false {
 		t.Errorf("TestIsClosing error")
 	}

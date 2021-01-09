@@ -29,3 +29,91 @@ func TestEscapeHtmlEntities(t *testing.T) {
 		t.Errorf("EscapeHtmlEntities err %s", result)
 	}
 }
+
+func TestNewXssOption(t *testing.T) {
+
+	o := NewXssOption()
+	if o.StripBlankChar != false {
+		t.Errorf("TestNewXssOption err")
+
+	}
+
+	if o.AllowCommentTag != false {
+		t.Errorf("TestNewXssOption err")
+
+	}
+
+	if o.StripIgnoreTag != false {
+		t.Errorf("TestNewXssOption err")
+
+	}
+}
+
+func TestNewDefaultXssOption(t *testing.T) {
+	o := NewDefaultXssOption()
+
+	if o.StripIgnoreTag != false {
+		t.Errorf("TestNewDefaultXssOption err")
+
+	}
+
+	if o.WhiteList == nil {
+		t.Errorf("TestNewDefaultXssOption err")
+	}
+
+	if o.OnTag == nil {
+		t.Errorf("TestNewDefaultXssOption err")
+	}
+}
+
+func TestIsSafeLink(t *testing.T) {
+	source := "ftp://"
+
+	result := isSafeLinkValue(source)
+
+	if result != true {
+		t.Errorf("TestIsSafeLink err %v", result)
+
+	}
+
+	source = "./"
+
+	result = isSafeLinkValue(source)
+
+	if result != true {
+		t.Errorf("TestIsSafeLink err")
+
+	}
+
+	source = "../"
+
+	result = isSafeLinkValue(source)
+
+	if result != true {
+		t.Errorf("TestIsSafeLink err")
+
+	}
+}
+
+func TestEscapeHTMLEntities1(t *testing.T) {
+	source := "&#d"
+	result := escapeHTMLEntities(source)
+	if result != "" {
+		t.Errorf("escapeHTMLEntities err")
+
+	}
+
+	source = "&#d;"
+	result = escapeHTMLEntities(source)
+	if result != "" {
+		t.Errorf("escapeHTMLEntities err")
+
+	}
+
+	source = "&#xX;"
+	result = escapeHTMLEntities(source)
+	if result != "" {
+		t.Errorf("escapeHTMLEntities3 err%v;", result)
+
+	}
+}
