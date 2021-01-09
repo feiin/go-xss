@@ -930,3 +930,183 @@ func TestFilterXSS(t *testing.T) {
 
 	}
 }
+
+
+func TestOnTagCustomMethod(t *testing.T) {
+ 	source := "dd<a href=\"#\"><b><c>haha</c></b></a><br>ff"
+
+	i := 0
+	html := FilterXSS(source, XssOption{
+		OnTag: func(tag, html string, options TagOption) *string {
+			i++
+
+			if i == 1 {
+				if tag != "a" {
+					t.Errorf("invalid tag")
+				}
+				if html != "<a href=\"#\">" {
+					t.Errorf("invalid tag html")
+				}
+				if options.IsClosing != false {
+					t.Errorf("invalid tag isClosing")
+				}
+				if options.Position != 2 {
+					t.Errorf("invalid tag Position")
+				}
+				if options.SourcePosition != 2 {
+					t.Errorf("invalid tag sourcePosition")
+				}
+
+				if options.IsWhite != true {
+					t.Errorf("invalid tag IsWhite")
+				}
+
+			}
+
+			if i == 2 {
+				if tag != "b" {
+					t.Errorf("invalid tag")
+				}
+				if html != "<b>" {
+					t.Errorf("invalid tag html")
+				}
+				if options.IsClosing != false {
+					t.Errorf("invalid tag isClosing")
+				}
+				if options.Position != 14 {
+					t.Errorf("invalid tag Position")
+				}
+				if options.SourcePosition != 14 {
+					t.Errorf("invalid tag sourcePosition")
+				}
+
+				if options.IsWhite != true {
+					t.Errorf("invalid tag IsWhite")
+				}
+			}
+
+			if i == 3 {
+				if tag != "c" {
+					t.Errorf("invalid tag")
+				}
+				if html != "<c>" {
+					t.Errorf("invalid tag html")
+				}
+				if options.IsClosing != false {
+					t.Errorf("invalid tag isClosing")
+				}
+				if options.Position != 17 {
+					t.Errorf("invalid tag Position")
+				}
+				if options.SourcePosition != 17 {
+					t.Errorf("invalid tag sourcePosition")
+				}
+
+				if options.IsWhite != false {
+					t.Errorf("invalid tag IsWhite")
+				}
+			}
+
+
+			if i == 4 {
+				if tag != "c" {
+					t.Errorf("invalid tag")
+				}
+				if html != "</c>" {
+					t.Errorf("invalid tag html")
+				}
+				if options.IsClosing != true {
+					t.Errorf("invalid tag isClosing")
+				}
+				if options.Position != 30 {
+					t.Errorf("invalid tag Position")
+				}
+				if options.SourcePosition != 24 {
+					t.Errorf("invalid tag sourcePosition")
+				}
+
+				if options.IsWhite != false {
+					t.Errorf("invalid tag IsWhite")
+				}
+			}
+
+	
+
+			if i == 5 {
+				if tag != "b" {
+					t.Errorf("invalid tag")
+				}
+				if html != "</b>" {
+					t.Errorf("invalid tag html")
+				}
+				if options.IsClosing != true {
+					t.Errorf("invalid tag isClosing")
+				}
+				if options.Position != 40 {
+					t.Errorf("invalid tag Position")
+				}
+				if options.SourcePosition != 28 {
+					t.Errorf("invalid tag sourcePosition")
+				}
+
+				if options.IsWhite != true {
+					t.Errorf("invalid tag IsWhite")
+				}
+			}
+
+			if i == 6 {
+				if tag != "a" {
+					t.Errorf("invalid tag")
+				}
+				if html != "</a>" {
+					t.Errorf("invalid tag html")
+				}
+				if options.IsClosing != true {
+					t.Errorf("invalid tag isClosing")
+				}
+				if options.Position != 44 {
+					t.Errorf("invalid tag Position")
+				}
+				if options.SourcePosition != 32 {
+					t.Errorf("invalid tag sourcePosition")
+				}
+
+				if options.IsWhite != true {
+					t.Errorf("invalid tag IsWhite")
+				}
+			}
+
+			if i == 7 {
+				if tag != "br" {
+					t.Errorf("invalid tag")
+				}
+				if html != "<br>" {
+					t.Errorf("invalid tag html")
+				}
+				if options.IsClosing != false {
+					t.Errorf("invalid tag isClosing")
+				}
+				if options.Position != 48 {
+					t.Errorf("invalid tag Position")
+				}
+				if options.SourcePosition != 36 {
+					t.Errorf("invalid tag sourcePosition")
+				}
+
+				if options.IsWhite != true {
+					t.Errorf("invalid tag IsWhite")
+				}
+			}
+
+
+			return nil
+
+		},
+	})
+
+
+	if html != "dd<a href=\"#\"><b>&lt;c&gt;haha&lt;/c&gt;</b></a><br>ff" {
+		t.Errorf("FilterXSS error %s", html)
+	}
+
+}
