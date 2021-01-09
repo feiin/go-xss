@@ -18,7 +18,7 @@ go-xss是一个用于对用户输入的内容进行过滤，以避免遭受 XSS 
 ```golang
 
 import (
-    "https://github.com/feiin/go-xss"
+    "github.com/feiin/go-xss"
 )
 
 
@@ -31,7 +31,7 @@ safeHtml := xss.FilterXSS(source,XssOption{})
 ```golang
 
 import (
-    "https://github.com/feiin/go-xss"
+    "github.com/feiin/go-xss"
 )
 
 source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
