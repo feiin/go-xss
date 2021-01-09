@@ -14,8 +14,8 @@ type Xss struct {
 	options XssOption
 }
 
-//NewXss 
-func NewXss(options XssOption) *Xss {
+//NewXSS 
+func NewXSS(options XssOption) *Xss {
 	
 
 	defaultOption := NewDefaultXssOption()
@@ -216,6 +216,6 @@ func (x *Xss) Process(html string) (string) {
 
 //FilterXSS filter xss func
 func FilterXSS(html string, options XssOption) string {
-	xss := NewXss(options)
+	xss := NewXSS(options)
 	return xss.Process(html)
 }

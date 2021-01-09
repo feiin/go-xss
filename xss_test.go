@@ -12,7 +12,7 @@ func TestProcess_normal(t *testing.T) {
 	options := XssOption {
 		// StripBlankChar:true,
 	}
-	xss := NewXss(options)
+	xss := NewXSS(options)
 
 	result := xss.Process("")
 
@@ -40,7 +40,7 @@ func TestProcess_normal(t *testing.T) {
 	options = XssOption {
 		StripBlankChar:true,
 	}
-	xss = NewXss(options)
+	xss = NewXSS(options)
 	result = xss.Process("a\u0000\u0001\u0002\u0003\r\n b")
 
 	if result !="a\r\n b" {
@@ -53,7 +53,7 @@ func TestProcess_normal(t *testing.T) {
 	options = XssOption {
 		// StripBlankChar:true,
 	}
-	xss = NewXss(options)
+	xss = NewXSS(options)
 	result = xss.Process("<b>abcd</b>")
 
 	if result != "<b>abcd</b>" {
@@ -403,7 +403,7 @@ func TestProcess_WhiteList(t *testing.T) {
 		// StripBlankChar:true,
 		WhiteList: make(map[string][]string),
 	}
-	xss := NewXss(options)
+	xss := NewXSS(options)
 
 	result := xss.Process("<a title=\"xx\">bb</a>")
 
@@ -423,7 +423,7 @@ func TestProcess_WhiteList(t *testing.T) {
 	options.WhiteList = map[string][]string {
 		"ooxx":{"yy"},
 	}
-	xss = NewXss(options)
+	xss = NewXSS(options)
 
 	result = xss.Process("<ooxx yy=\"ok\" cc=\"no\">uu</ooxx>")
 
@@ -439,7 +439,7 @@ func TestProcess_WhiteList(t *testing.T) {
 func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	options := XssOption {
 	}
-	xss := NewXss(options)
+	xss := NewXSS(options)
 
 	result := xss.Process("></SCRI" +
 	"PT>\">'><SCRI" +
@@ -621,7 +621,7 @@ func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	options.WhiteList = map[string][]string {
 		"a":{"style"},
 	}
-	xss = NewXss(options)
+	xss = NewXSS(options)
 
 	result = xss.Process("<a style=\"url('javascript:alert(1)')\">")
 
@@ -634,7 +634,7 @@ func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	options.WhiteList = map[string][]string {
 		"td":{"background"},
 	}
-	xss = NewXss(options)
+	xss = NewXSS(options)
 
 	result = xss.Process("<td background=\"url('javascript:alert(1)')\">")
 
@@ -646,7 +646,7 @@ func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	options.WhiteList = map[string][]string {
 		"div":{"style"},
 	}
-	xss = NewXss(options)
+	xss = NewXSS(options)
 
 	result = xss.Process("<DIV STYLE=\"width: \nexpression(alert(1));\">")
 
@@ -678,7 +678,7 @@ func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	}
 
 	options.WhiteList = nil
-	xss = NewXss(options)
+	xss = NewXSS(options)
 	result = xss.Process("<IMG SRC='vbscript:msgbox(\"XSS\")'>")
 
 	if result != "<img src>" {
@@ -772,7 +772,7 @@ func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	}
 
 	options.AllowCommentTag = true
-	xss = NewXss(options)
+	xss = NewXSS(options)
 
 
 	result = xss.Process("<!--[if gte IE 4]><SCRIPT>alert('XSS');</SCRIPT><![endif]--> END")
@@ -783,7 +783,7 @@ func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	}
 
 	options.AllowCommentTag = false
-	xss = NewXss(options)
+	xss = NewXSS(options)
 	result = xss.Process("<!--[if gte IE 4]><SCRI" +
 	"PT>alert('XSS');</SCRI" +
 	"PT><![endif]--> END")
@@ -888,7 +888,7 @@ func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	}
 
 	options.AllowCommentTag = false
-	xss = NewXss(options)
+	xss = NewXSS(options)
 	result = xss.Process("<!--                               -->")
 
 	if result != "" {
