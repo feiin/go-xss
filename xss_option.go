@@ -285,7 +285,7 @@ func isSafeLinkValue(value string) bool {
 
 func safeAttrValue(tag, name, value string) string {
 
-	value = friendlyAttrValue(value)
+	value = FriendlyAttrValue(value)
 	if name == "href" || name == "src" { 
 
 		value = strings.TrimSpace(value)
@@ -316,12 +316,12 @@ func safeAttrValue(tag, name, value string) string {
 
 	}
 
-	value = escapeAttrValue(value)
+	value = EscapeAttrValue(value)
 	return value
 }
 
-//friendlyAttrValue get friendly attribute value
-func friendlyAttrValue(str string) string {
+//FriendlyAttrValue get friendly attribute value
+func FriendlyAttrValue(str string) string {
  	str = unescapeQuote(str)
 	str = escapeHTMLEntities(str)
 	str = escapeDangerHTML5Entities(str)
@@ -397,7 +397,7 @@ func escapeHTML(html string) string {
 }
 
 
-func escapeAttrValue(str string) string {
+func EscapeAttrValue(str string) string {
 	str = escapeQuote(str)
 	str = escapeHTML(str)
 
