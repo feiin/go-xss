@@ -311,9 +311,9 @@ img1, img2, img3, img4
 ```golang
 	source := "<strong>hello</strong><script>alert(/xss/);</script>end"
 	html := xss.FilterXSS(source,xss.XssOption{
-			WhiteList:map[string][]string{},  // 白名单为空，表示过滤所有标签
-			StripIgnoreTag:true, // 过滤所有非白名单标签的HTML
-			StripIgnoreTagBody:[]string{"script"}, //script标签较特殊，需要过滤标签中间的内容
+			WhiteList:map[string][]string{},  // // empty, means filter out all tags
+			StripIgnoreTag:true, // filter out all HTML not in the whitelist
+			StripIgnoreTagBody:[]string{"script"}, // the script tag is a special case, we need
 	})
 	fmt.Printf("text: %s", html);
 ```
