@@ -6,7 +6,7 @@ import (
 	"strings"
 	// "fmt"
 )
-type Config struct {
+type XssOption struct {
 
 	//remove invisible characters
 	StripBlankChar bool
@@ -20,6 +20,27 @@ type Config struct {
 	WhiteList map[string][]string
 
 
+	OnTag func(tag, html string, options TagOption) *string
+
+	OnTagAttr func(tag, name, value string) *string
+
+	OnIgnoreTag func(tag, html string, options TagOption) *string
+
+
+	OnIgnoreTagAttr func(tag,name, value string,isWhiteAttr bool) *string
+
+	StripTagBody func(tags []string,next OnIgnoreTagFunc) StripTagBodyResult
+	SafeAttrValue func(tag, name, value string) string
+	EscapeHTML func(html string) string
+	UnescapeQuote func(html string) string
+	EscapeHTMLEntities func(html string) string
+
+	EscapeQuote func(html string) string
+
+	EscapeAttrValue func(html string) string
+
+
+
 }
 
 type TagOption struct {
@@ -27,7 +48,32 @@ type TagOption struct {
 	Position int
 	IsClosing bool
 	IsWhite bool
+}
 
+//NewXssOption
+func NewXssOption() XssOption {
+	option := XssOption{}
+	return option
+}
+
+//NewDefaultXssOption
+func NewDefaultXssOption() XssOption {
+
+	defaultOption := XssOption{}
+	defaultOption.WhiteList = GetDefaultWhiteList()
+	defaultOption.OnTag = onTag
+	defaultOption.OnTagAttr = onTagAttr
+	defaultOption.OnIgnoreTag = onIgnoreTag
+	defaultOption.OnIgnoreTagAttr = onIgnoreTagAttr
+	defaultOption.EscapeHTML = escapeHTML
+	defaultOption.StripTagBody = stripTagBody
+	defaultOption.SafeAttrValue = safeAttrValue
+	defaultOption.UnescapeQuote = unescapeQuote
+	defaultOption.EscapeHTMLEntities = escapeHTMLEntities
+	defaultOption.EscapeQuote = escapeQuote
+	defaultOption.EscapeAttrValue = escapeAttrValue
+
+	return defaultOption
 }
 
 
@@ -110,30 +156,27 @@ func GetDefaultWhiteList() map[string][]string {
 	return result
 }
 
-func OnTag(tag, html string, options TagOption) *string {
+func onTag(tag, html string, options TagOption) *string {
 	//do nothing 
 	return nil
 }
 
-func OnTagAttr(tag, name, value string) *string {
+func onTagAttr(tag, name, value string) *string {
 	//do nothing 
 	return nil
 }
 
 
-func OnIgnoreTag(tag, html string, options TagOption) *string {
+func onIgnoreTag(tag, html string, options TagOption) *string {
 	return nil
 }
 
-func OnIgnoreTagAttr(tag,name, value string,isWhiteAttr bool) *string {
+func onIgnoreTagAttr(tag,name, value string,isWhiteAttr bool) *string {
 	return nil
 }
 
-func ScapeHtml(html string) string {
-	return regGT.ReplaceAllString(regLT.ReplaceAllString(html,"&lt;"),"&gt;")
-}
 
-func StripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
+func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 	
 	isRemoveAllTag := len(tags) == 0
 
@@ -243,7 +286,7 @@ func isSafeLinkValue(value string) bool {
 	return false
 }
 
-func SafeAttrValue(tag, name, value string) string {
+func safeAttrValue(tag, name, value string) string {
 
 	value = friendlyAttrValue(value)
 	if name == "href" || name == "src" { 
@@ -276,27 +319,27 @@ func SafeAttrValue(tag, name, value string) string {
 
 	}
 
-	value = EscapeAttrValue(value)
+	value = escapeAttrValue(value)
 	return value
 }
 
 //friendlyAttrValue get friendly attribute value
 func friendlyAttrValue(str string) string {
- 	str = UnescapeQuote(str)
-	str = EscapeHtmlEntities(str)
-	str = EscapeDangerHtml5Entities(str)
-	str = ClearNonPrintableCharacter(str)
+ 	str = unescapeQuote(str)
+	str = escapeHTMLEntities(str)
+	str = escapeDangerHTML5Entities(str)
+	str = clearNonPrintableCharacter(str)
 	return str
 }
 
 
-//UnescapeQuote unescape double quote 
-func UnescapeQuote(str string) string {
+//unescapeQuote unescape double quote 
+func unescapeQuote(str string) string {
 	return regQuote2.ReplaceAllString(str,"\"")
 }
 
-//EscapeHtmlEntities
-func EscapeHtmlEntities(str string) string {
+//escapeHtmlEntities
+func escapeHTMLEntities(str string) string {
 	return regAttrValue1.ReplaceAllStringFunc(str, func(input string) string {
 		input = input[2:]
 
@@ -322,13 +365,13 @@ func EscapeHtmlEntities(str string) string {
 	})
 }
 
-//EscapeDangerHtml5Entities
-func EscapeDangerHtml5Entities(str string) string {
+//escapeDangerHTML5Entities
+func escapeDangerHTML5Entities(str string) string {
    return regAttrNewLine.ReplaceAllString(regAttrValueColon.ReplaceAllString(str,":")," ")
 }
 
-//ClearNonPrintableCharacter
-func ClearNonPrintableCharacter(str string) string {
+//clearNonPrintableCharacter
+func clearNonPrintableCharacter(str string) string {
 	chs := []rune(str)
  
 	result := []rune{}
@@ -347,18 +390,19 @@ func ClearNonPrintableCharacter(str string) string {
 }
 
 
-func EscapeQuote(str string) string {
+func escapeQuote(str string) string {
 	return regQuote.ReplaceAllString(str,"&quot;")
 }
 
-func EscapeHtml(html string) string {
+//escapeHTML
+func escapeHTML(html string) string {
 	return regGT.ReplaceAllString(regLT.ReplaceAllString(html,"&lt;"),"&gt;")
 }
 
 
-func EscapeAttrValue(str string) string {
-	str = EscapeQuote(str)
-	str = EscapeHtml(str)
+func escapeAttrValue(str string) string {
+	str = escapeQuote(str)
+	str = escapeHTML(str)
 
 	return str
 }

@@ -9,7 +9,7 @@ import (
 
 func TestProcess_normal(t *testing.T) {
 
-	options := Config {
+	options := XssOption {
 		// StripBlankChar:true,
 	}
 	xss := NewXss(options)
@@ -37,7 +37,7 @@ func TestProcess_normal(t *testing.T) {
 	}
 
 
-	options = Config {
+	options = XssOption {
 		StripBlankChar:true,
 	}
 	xss = NewXss(options)
@@ -50,7 +50,7 @@ func TestProcess_normal(t *testing.T) {
 
 
 	//过滤不在白名单的标签
-	options = Config {
+	options = XssOption {
 		// StripBlankChar:true,
 	}
 	xss = NewXss(options)
@@ -399,7 +399,7 @@ func TestProcess_normal(t *testing.T) {
 
 
 func TestProcess_WhiteList(t *testing.T) {
-	options := Config {
+	options := XssOption {
 		// StripBlankChar:true,
 		WhiteList: make(map[string][]string),
 	}
@@ -437,7 +437,7 @@ func TestProcess_WhiteList(t *testing.T) {
 }
 
 func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
-	options := Config {
+	options := XssOption {
 	}
 	xss := NewXss(options)
 

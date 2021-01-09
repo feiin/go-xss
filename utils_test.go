@@ -15,7 +15,7 @@ func TestSpaceIndex(t *testing.T) {
 		t.Errorf("index err %+v %d",x,index)
 	}
 
-	t.Logf("space index %+v", index)
+	// t.Logf("space index %+v", index)
 }
 
 
@@ -27,7 +27,7 @@ func TestStripBlankChar(t *testing.T) {
 		t.Errorf("stripBlankChar err %s",result)
 
 	}
-	t.Logf("stripBlankChar %+v", result)
+	// t.Logf("stripBlankChar %+v", result)
 }
 
 func TestStripCommentTag(t *testing.T) {
@@ -40,5 +40,5 @@ func TestStripCommentTag(t *testing.T) {
 
 	}
 
-	t.Logf("stripCommentTag %+v", result)
+	// t.Logf("stripCommentTag %+v", result)
 }

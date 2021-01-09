@@ -2,8 +2,7 @@ package xss
 
 import (
 	"testing"
-	"fmt"
-
+ 
 )
 
 
@@ -150,8 +149,7 @@ func TestParseAttr(t *testing.T) {
 
 	onAttr := func (name string ,value string) string {
 
-		fmt.Printf("name:%s,value:%s\n",name,value)
-		if index == 0 {
+ 		if index == 0 {
 			if name == "href" && value == "#" {
 				t.Logf("parse attr success name:%s value:%s",name, value)
 			} else {
