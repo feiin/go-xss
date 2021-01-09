@@ -1110,3 +1110,19 @@ func TestOnTagCustomMethod(t *testing.T) {
 	}
 
 }
+
+
+func TestOnTagReturnNewHtml(t *testing.T) {
+
+	source := "dd<a href=\"#\"><b><c>haha</c></b></a><br>ff"
+
+	html := FilterXSS(source,XssOption{
+		OnTag: func(tag, html string, options TagOption) *string {
+			return &html
+		},
+	})
+
+	if html != source {
+		t.Errorf("TestOnTagReturnNewHtml error %s", html)
+	}
+}
