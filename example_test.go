@@ -12,15 +12,7 @@ func Example() {
 
 	source := "<div a=\"1\" b=\"2\" data-a=\"3\" data-b=\"4\">hello</div>";
 
-	html := xss.FilterXSS(source,xss.XssOption{
-			OnIgnoreTagAttr: func(tag,name, value string,isWhiteAttr bool) *string {
-				if len(name)>=5 && name[0:5] == "data-" {
-					ret := name + "=\"" + xss.EscapeAttrValue(value)+"\""
-					return &ret
-				}
-				return nil
-			},
-	})
+	html := xss.FilterXSS(source,xss.XssOption{})
 	fmt.Printf("%s\nconvert to:\n%s", source, html);
 
 
