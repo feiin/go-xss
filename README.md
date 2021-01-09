@@ -72,7 +72,7 @@ safeHtml := x.Process(html)
 通过 WhiteList 来指定，格式类型为：`map[string][]string`。不在白名单上的标签将被过滤，不在白名单上的属性也会被过滤。以下是示例：
 
 ```golang
-/ 只允许a标签，该标签只允许href, title, target这三个属性
+// 只允许a标签，该标签只允许href, title, target这三个属性
 options.WhiteList = map[string][]string {
 		"a":{"href","title","target"},
 }
