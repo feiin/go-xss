@@ -50,7 +50,7 @@ safeHtml := x.Process(source)
 ```golang
 source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
 
-options := {}
+options := xss.XssOption{}
 safeHtml := xss.FilterXSS(source,options)
 
 ```
@@ -61,10 +61,10 @@ safeHtml := xss.FilterXSS(source,options)
 
 ```golang
 source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
-options := {}
+options := xss.XssOption{}
 
 x := xss.NewXSS(options)
-safeHtml := x.Process(html)
+safeHtml := x.Process(source)
 ```
 
 ### 白名单

@@ -43,7 +43,7 @@ When using the xss, the options parameter could be used to specify custom rules:
 ```golang
 source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
 
-options := {}
+options := xss.XssOption{}
 safeHtml := xss.FilterXSS(source,options)
 
 ```
@@ -55,10 +55,10 @@ To avoid passing options every time, you can also do it in a faster way by creat
 
 ```golang
 source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
-options := {}
+options := xss.XssOption{}
 
 x := xss.NewXSS(options)
-safeHtml := x.Process(html)
+safeHtml := x.Process(source)
 ```
 
 ## Whitelist
