@@ -149,7 +149,7 @@ func OnIgnoreTagAttr(tag,name, value string,isWhiteAttr bool) *string {
 通过 `EscapeHtml` 来指定相应的处理函数。以下是默认代码 （不建议修改） ：
 
 ```golang
-func escapeHTML(html string) string {
+func EscapeHTML(html string) string {
 	return regGT.ReplaceAllString(regLT.ReplaceAllString(html,"&lt;"),"&gt;")
 }
 
@@ -160,7 +160,7 @@ func escapeHTML(html string) string {
 通过 `SafeAttrValue` 来指定相应的处理函数。以下是详细说明：
 
 ```golang
-func safeAttrValue(tag, name, value string) string {
+func SafeAttrValue(tag, name, value string) string {
 // 参数说明与onTagAttr相同（没有options参数）
   // 返回一个字符串表示该属性值
 
@@ -195,13 +195,13 @@ code:alert(/xss/);
 
 通过 `StripIgnoreTagBody` 来设置：
 
-* nil时：（默认），不特殊处理
-* []string{}：(空数组) 去掉所有不在白名单上的标签 
-* []string{'tag1', 'tag2'}：仅去掉指定的不在白名单上的标签
+* `nil`时：（默认），不特殊处理
+* `[]string{}`：(空数组) 去掉所有不在白名单上的标签 
+* `[]string{"tag1", "tag2"}`：仅去掉指定的不在白名单上的标签
 
 示例：
  
-当设置 StripIgnoreTagBody = []string{'script'}时，以下代码
+当设置 `StripIgnoreTagBody = []string{"script"}时，以下代码`
 ```
 code:<script>alert(/xss/);</script>
 ```
@@ -218,7 +218,7 @@ code:
 * false：（默认），自动去掉 HTML 中的备注
 示例：
 
-当设置 AllowCommentTag = false 时，以下代码
+当设置 `AllowCommentTag = false` 时，以下代码
 ```
 code:<!-- something --> END
 ```
@@ -310,7 +310,7 @@ source := "<strong>hello</strong><script>alert(/xss/);</script>end"
 html := FilterXSS(source,XssOption{
         WhiteList:map[string][]string{},  // 白名单为空，表示过滤所有标签
         StripIgnoreTag:true, // 过滤所有非白名单标签的HTML
-        StripIgnoreTagBody:[]string{'script'} // script标签较特殊，需要过滤标签中间的内容
+        StripIgnoreTagBody:[]string{"script"} // script标签较特殊，需要过滤标签中间的内容
 })
 fmt.Printf("text: %s", html);
 ```
