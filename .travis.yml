@@ -8,3 +8,7 @@ go:
 # run tests w/ coverage
 script:
   - $GOPATH/bin/goveralls -service=travis-ci -repotoken $repo_token
+  - go test ./
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
