@@ -117,3 +117,16 @@ func TestEscapeHTMLEntities1(t *testing.T) {
 
 	}
 }
+
+
+func TestStripTagBody(t *testing.T) {
+	r := stripTagBody([]string{},nil)
+	html := ""
+
+	result := r.Remove(html)
+
+	if result != "" {
+		t.Errorf("TestStripTagBodyResultRemove err;")
+
+	}
+}
