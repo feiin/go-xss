@@ -190,3 +190,17 @@ func TestParseAttr(t *testing.T) {
 
 	t.Logf("parseAttr result %v", result)
 }
+
+func TestFindBeforeEqual(t *testing.T) {
+	i := findNextEqual("<a>",20)
+	if i != -1 {
+		t.Errorf("findNextEqual error %d",i)
+	}
+}
+
+func TestFindNextEqual(t *testing.T) {
+	i := findNextEqual("<a>",0)
+	if i != -1 {
+		t.Errorf("findNextEqual error %d",i)
+	}
+}
