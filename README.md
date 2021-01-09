@@ -24,7 +24,7 @@ import (
 
 source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
 
-safeHtml := xss.FilterXSS(source,XssOption{})
+safeHtml := xss.FilterXSS(source,xss.XssOption{})
 
 ```
 
@@ -35,8 +35,8 @@ import (
 )
 
 source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
-x := xss.NewXSS(XssOption{})
-safeHtml := x.Process(html)
+x := xss.NewXSS(xss.XssOption{})
+safeHtml := x.Process(source)
 
 ```
 
@@ -235,18 +235,18 @@ code: END
 
 ```golang
 
-source := "<div a=\"1\" b=\"2\" data-a=\"3\" data-b=\"4\">hello</div>";
+	source := "<div a=\"1\" b=\"2\" data-a=\"3\" data-b=\"4\">hello</div>";
 
-html := FilterXSS(source,XssOption{
-		OnIgnoreTagAttr: func(tag,name, value string,isWhiteAttr bool) *string {
-            if name[0:5] == "data-" {
-                return name + "=\"" + xss.EscapeAttrValue(value) + "\"";
-            }
-            return nil
-        },
-})
-fmt.Printf("%s\nconvert to:\n%s", source, html);
-
+	html := xss.FilterXSS(source,xss.XssOption{
+			OnIgnoreTagAttr: func(tag,name, value string,isWhiteAttr bool) *string {
+				if len(name)>=5 && name[0:5] == "data-" {
+					ret := name + "=\"" + xss.EscapeAttrValue(value)+"\""
+					return &ret
+				}
+				return nil
+			},
+	})
+	fmt.Printf("%s\nconvert to:\n%s", source, html);
 ```
 
 运行结果：
@@ -260,17 +260,17 @@ convert to:
 允许名称以 x-开头的标签
 
 ```
-source := "<x><x-1>he<x-2 checked></x-2>wwww</x-1><a>";
+	source := "<x><x-1>he<x-2 checked></x-2>wwww</x-1><a>";
 
-html := FilterXSS(source,XssOption{
-		onIgnoreTag: func(tag, html string, options TagOption) *string {
-            if tag[0:2] == "x-" {
-                return html;
-            }
-            return nil
-        },
-})
-fmt.Printf("%s\nconvert to:\n%s", source, html);
+	html := xss.FilterXSS(source,xss.XssOption{
+			OnIgnoreTag: func(tag, html string, options xss.TagOption) *string {
+				if len(tag)>=2 && tag[0:2] == "x-" {
+					return &html;
+				}
+				return nil
+			},
+	})
+	fmt.Printf("%s\nconvert to:\n%s", source, html);
 
 ```
 
@@ -285,17 +285,17 @@ convert to:
 ### 分析 HTML 代码中的图片列表
 
 ```golang
-source := "<img src=\"img1\">a<img src=\"img2\">b<img src=\"img3\">c<img src=\"img4\">d"
-var list []string
-html := FilterXSS(source,XssOption{
-		OnTagAttr: func(tag, name, value string ,isWhiteAttr bool) *string {
-            if tag == "img" && name="src" {
-                list = append(list,value)
-            }
-            return nil
-        },
-})
-fmt.Printf("image list:\n%s", strings.Join(list, ","));
+	source := "<img src=\"img1\">a<img src=\"img2\">b<img src=\"img3\">c<img src=\"img4\">d"
+	var list []string
+	html := xss.FilterXSS(source,xss.XssOption{
+			OnTagAttr: func(tag, name, value string ,isWhiteAttr bool) *string {
+				if tag == "img" && name == "src" {
+					list = append(list,value)
+				}
+				return nil
+			},
+	})
+	fmt.Printf("image list:\n%s", strings.Join(list, ","));
 ```
 
 运行结果：
@@ -306,13 +306,13 @@ img1, img2, img3, img4
 
 ### 去除 HTML 标签（只保留文本内容）
 ```golang
-source := "<strong>hello</strong><script>alert(/xss/);</script>end"
-html := FilterXSS(source,XssOption{
-        WhiteList:map[string][]string{},  // 白名单为空，表示过滤所有标签
-        StripIgnoreTag:true, // 过滤所有非白名单标签的HTML
-        StripIgnoreTagBody:[]string{"script"} // script标签较特殊，需要过滤标签中间的内容
-})
-fmt.Printf("text: %s", html);
+	source := "<strong>hello</strong><script>alert(/xss/);</script>end"
+	html := xss.FilterXSS(source,xss.XssOption{
+			WhiteList:map[string][]string{},  // 白名单为空，表示过滤所有标签
+			StripIgnoreTag:true, // 过滤所有非白名单标签的HTML
+			StripIgnoreTagBody:[]string{"script"}, //script标签较特殊，需要过滤标签中间的内容
+	})
+	fmt.Printf("text: %s", html);
 ```
 
 运行结果：
