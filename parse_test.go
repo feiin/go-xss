@@ -204,3 +204,10 @@ func TestFindNextEqual(t *testing.T) {
 		t.Errorf("findNextEqual error %d",i)
 	}
 }
+
+func TestIsClosing(t *testing.T) {
+	i := isClosing("<a")
+	if i != false {
+		t.Errorf("TestIsClosing error")
+	}
+}
