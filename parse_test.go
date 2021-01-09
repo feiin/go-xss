@@ -81,10 +81,6 @@ func TestStripQuoteWrap(t *testing.T) {
 }
 
 
-
-
-
-
 func escapeHtml(input string) string {
 	return input
 }
