@@ -1,4 +1,7 @@
+[![GoDoc](https://godoc.org/github.com/feiin/go-xss?status.svg)](https://godoc.org/github.com/feiin/go-xss)
+
 # go-xss 根据白名单过滤 HTML(防止 XSS 攻击)
+
 go-xss is a module used to filter input from users to prevent XSS attacks
 > It is a GO port of https://github.com/leizongmin/js-xss
 
@@ -6,9 +9,7 @@ go-xss是一个用于对用户输入的内容进行过滤，以避免遭受 XSS 
 
 
 [ENGLISH](./README.en.md)
-
-
-[go-xss godoc](https://godoc.org/github.com/feiin/go-xss#example-package)
+ 
 
 
 
