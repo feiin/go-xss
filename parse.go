@@ -2,7 +2,7 @@ package xss
 
 import (
 	"strings"
-	"regexp"
+	// "regexp"
 	// "fmt"
 )
 
@@ -10,8 +10,7 @@ type OnTagFunc func(sourcePosition int,position int,tag string,html string, isCl
 type escapeFunc func(html string) string
 type onAttrFunc func(name, value string) string
 
-var regAttr = regexp.MustCompile("[^a-zA-Z0-9_:\\.\\-]")
-var regEmtpy = regexp.MustCompile("\\s|\\n|\\t")
+
 
 //getTagName get tag name
 func getTagName(html string) string {

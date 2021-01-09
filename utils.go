@@ -5,7 +5,7 @@ package xss
 
 //spaceIndex get the pos of first space
 func spaceIndex(str string) int {
-	locs := reg.FindStringIndex(str)
+	locs := regSpace.FindStringIndex(str)
 
 	if locs != nil {
 		return locs[0]

@@ -4,7 +4,9 @@ import (
 	"regexp"
 )
 
-var reg = regexp.MustCompile("\\s|\\n|\\t")
+var regAttr = regexp.MustCompile("[^a-zA-Z0-9_:\\.\\-]")
+var regEmtpy = regexp.MustCompile("\\s|\\n|\\t")
+var regSpace = regexp.MustCompile("\\s|\\n|\\t")
 var regComment = regexp.MustCompile("<!--[\\s\\S]*?-->")
 var regLT = regexp.MustCompile("<")
 var regGT = regexp.MustCompile(">")
