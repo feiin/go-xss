@@ -5,8 +5,7 @@ import (
 	// "bytes"
 	"strings"
 	"github.com/feiin/pkg/arrays"
-	// "fmt"
-	// "io"
+ 	// "io"
 )
 
 
@@ -43,20 +42,13 @@ func NewXSS(options XssOption) *Xss {
 		options.SafeAttrValue = defaultOption.SafeAttrValue
 	}
 
-	if options.UnescapeQuote == nil {
-		options.UnescapeQuote = defaultOption.UnescapeQuote
-	}
-
-	if options.EscapeQuote == nil {
-		options.EscapeQuote = defaultOption.EscapeQuote
-	}
-
-	if options.EscapeAttrValue == nil {
-		options.EscapeAttrValue = defaultOption.EscapeAttrValue
-	}
 
 	if options.WhiteList == nil {
 		options.WhiteList = defaultOption.WhiteList
+	}
+
+	if options.StripTagBody == nil {
+		options.StripTagBody = defaultOption.StripTagBody
 	}
 
 	xss := &Xss{
@@ -101,8 +93,14 @@ func (x *Xss) Process(html string) (string) {
 		return html
 	}
  
+	//cannot use these two options "stripIgnoreTag" and "onIgnoreTag" at the same time'
+	if x.options.StripIgnoreTag {
+		x.options.OnIgnoreTag = onIgnoreTagStripAll
+	}
+
+
 	onIgnoreTag := x.options.OnIgnoreTag
-	escapeHTML := x.options.EscapeHTML
+	escapeHTML :=  x.options.EscapeHTML
 	onTag := x.options.OnTag
 	onTagAttr := x.options.OnTagAttr
 	safeAttrValue := x.options.SafeAttrValue
@@ -119,13 +117,19 @@ func (x *Xss) Process(html string) (string) {
 		html = stripCommentTag(html)
 	}
 
+	
+
+
+
 	// if enable stripIgnoreTagBody
 	var stripIgnoreTagBody StripTagBodyResult
 	if x.options.StripIgnoreTagBody != nil {
-		stripIgnoreTagBody = x.options.StripTagBody( x.options.StripIgnoreTagBody, onIgnoreTag)
-		onIgnoreTag = stripIgnoreTagBody.OnIgnoreTag
+
+ 		stripIgnoreTagBody = x.options.StripTagBody(x.options.StripIgnoreTagBody, onIgnoreTag)
+ 		onIgnoreTag = stripIgnoreTagBody.OnIgnoreTag
 	}
 
+	
 	retHTML := parseTag(html,func(sourcePosition int,position int,tag string,html string, isClosing bool) string {
 		isWhite := false
 
@@ -161,7 +165,7 @@ func (x *Xss) Process(html string) (string) {
 			attrsHTML := parseAttr(attrs.Html, func(name,value string) string{
 				isWhiteAttr := arrays.ContainsString(whiteAttrList, name) != -1
 
-				ret := onTagAttr(tag, name, value)
+				ret := onTagAttr(tag, name, value,isWhiteAttr)
 
 				if ret != nil {
 					return *ret

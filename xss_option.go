@@ -4,8 +4,8 @@ package xss
 import (
 	"strconv"
 	"strings"
-	// "fmt"
 )
+
 type XssOption struct {
 
 	//remove invisible characters
@@ -13,6 +13,8 @@ type XssOption struct {
 
 	// remove html comments
 	AllowCommentTag bool
+ 
+	StripIgnoreTag bool
 
 	// StripIgnoreTagBody
 	StripIgnoreTagBody []string
@@ -22,9 +24,9 @@ type XssOption struct {
 
 	OnTag func(tag, html string, options TagOption) *string
 
-	OnTagAttr func(tag, name, value string) *string
-
 	OnIgnoreTag func(tag, html string, options TagOption) *string
+
+	OnTagAttr func(tag, name, value string ,isWhiteAttr bool) *string
 
 
 	OnIgnoreTagAttr func(tag,name, value string,isWhiteAttr bool) *string
@@ -32,15 +34,6 @@ type XssOption struct {
 	StripTagBody func(tags []string,next OnIgnoreTagFunc) StripTagBodyResult
 	SafeAttrValue func(tag, name, value string) string
 	EscapeHTML func(html string) string
-	UnescapeQuote func(html string) string
-	EscapeHTMLEntities func(html string) string
-
-	EscapeQuote func(html string) string
-
-	EscapeAttrValue func(html string) string
-
-
-
 }
 
 type TagOption struct {
@@ -67,11 +60,7 @@ func NewDefaultXssOption() XssOption {
 	defaultOption.OnIgnoreTagAttr = onIgnoreTagAttr
 	defaultOption.EscapeHTML = escapeHTML
 	defaultOption.StripTagBody = stripTagBody
-	defaultOption.SafeAttrValue = safeAttrValue
-	defaultOption.UnescapeQuote = unescapeQuote
-	defaultOption.EscapeHTMLEntities = escapeHTMLEntities
-	defaultOption.EscapeQuote = escapeQuote
-	defaultOption.EscapeAttrValue = escapeAttrValue
+	defaultOption.SafeAttrValue = safeAttrValue 
 
 	return defaultOption
 }
@@ -161,7 +150,7 @@ func onTag(tag, html string, options TagOption) *string {
 	return nil
 }
 
-func onTagAttr(tag, name, value string) *string {
+func onTagAttr(tag, name, value string,isWhiteAttr bool) *string {
 	//do nothing 
 	return nil
 }
@@ -177,7 +166,7 @@ func onIgnoreTagAttr(tag,name, value string,isWhiteAttr bool) *string {
 
 
 func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
-	
+ 
 	isRemoveAllTag := len(tags) == 0
 
 	var isRemoveTag = func (tag string) bool {
@@ -200,8 +189,10 @@ func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 	result := StripTagBodyResult{}
 
 	result.OnIgnoreTag = func(tag string,html string, options TagOption) *string {
+
 		if isRemoveTag(tag) {
 			if options.IsClosing {
+
 				var ret = "[/removed]"
 				var end = options.Position + len(ret)
 				  
@@ -215,7 +206,7 @@ func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 				return &ret
 			} 
 
-			if posStart != -1 {
+			if posStart == -1 {
 				posStart = options.Position
 			}
 			ret := "[removed]"
@@ -228,8 +219,14 @@ func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 
 	result.Remove = func(html string) string {
 		var rethtml = ""
+
+		if len(removeList) == 0 {
+			return html
+		}
+
 		var lastPos = 0
 		for _,item := range removeList {
+
 			rethtml += html[lastPos:item[0]]
 			lastPos = item[1]
 		}
@@ -405,4 +402,9 @@ func escapeAttrValue(str string) string {
 	str = escapeHTML(str)
 
 	return str
+}
+
+func onIgnoreTagStripAll(tag, html string, options TagOption) *string {
+	ret := ""
+	return &ret;
 }

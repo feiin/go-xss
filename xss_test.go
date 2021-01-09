@@ -1126,3 +1126,416 @@ func TestOnTagReturnNewHtml(t *testing.T) {
 		t.Errorf("TestOnTagReturnNewHtml error %s", html)
 	}
 }
+
+func TestOnIgnoreTag(t *testing.T) {
+
+	i := 0
+	source := "dd<a href=\"#\"><b><c>haha</c></b></a><br>ff"
+	html := FilterXSS(source,XssOption{
+		OnIgnoreTag: func(tag, html string, options TagOption) *string {
+			 i++
+
+			 if i== 1 {
+				 if tag != "c" {
+					t.Errorf("onIgnoreTag tag error %s", tag)
+
+				 }
+
+				 if html != "<c>" {
+					t.Errorf("onIgnoreTag html error %s", html)
+
+				 }
+
+				 if options.IsClosing != false {
+					t.Errorf("onIgnoreTag IsClosing error ")
+
+				 }
+
+				 if options.Position != 17 {
+					t.Errorf("onIgnoreTag Position error ")
+
+				 }
+
+				 if options.SourcePosition != 17 {
+					t.Errorf("onIgnoreTag SourcePosition error ")
+
+				 }
+
+				 if options.IsWhite != false {
+					t.Errorf("onIgnoreTag IsWhite error ")
+
+				 }
+			 } else if i == 2 {
+				if tag != "c" {
+					t.Errorf("onIgnoreTag tag error %s", tag)
+
+				 }
+
+				 if html != "</c>" {
+					t.Errorf("onIgnoreTag html error %s", html)
+
+				 }
+
+				 if options.IsClosing != true {
+					t.Errorf("onIgnoreTag IsClosing error ")
+
+				 }
+
+				 if options.Position != 30 {
+					t.Errorf("onIgnoreTag Position error ")
+
+				 }
+
+				 if options.SourcePosition != 24 {
+					t.Errorf("onIgnoreTag SourcePosition error ")
+
+				 }
+
+				 if options.IsWhite != false {
+					t.Errorf("onIgnoreTag IsWhite error ")
+
+				 }
+			 } else {
+				t.Errorf("onIgnoreTag  error ")
+
+			 }
+			 return nil
+		},
+	})
+
+	if html != "dd<a href=\"#\"><b>&lt;c&gt;haha&lt;/c&gt;</b></a><br>ff" {
+		t.Errorf("onIgnoreTag error %s", html)
+	}
+}
+
+func TestOnIgnoreTagReturnNewHtml(t *testing.T) {
+	source := "dd<a href=\"#\"><b><c>haha</c></b></a><br>ff"
+	html := FilterXSS(source,XssOption{
+		OnIgnoreTag: func(tag, html string, options TagOption) *string {
+			
+			closeHtml := ""
+			if options.IsClosing == true {
+				closeHtml = "/"
+			}
+			 ret := "["+closeHtml+"removed]"
+			 return  &ret
+		},
+	})
+
+	if html != "dd<a href=\"#\"><b>[removed]haha[/removed]</b></a><br>ff" {
+		t.Errorf("onIgnoreTag error %s", html)
+	}
+}
+
+func TestOnTagAttr(t *testing.T) {
+	source := "<a href=\"#\" target=\"_blank\" checked data-a=\"b\">hi</a href=\"d\">"
+
+	i := 0
+	html := FilterXSS(source,XssOption{
+		OnTagAttr: func(tag, name, value string ,isWhiteAttr bool) *string {
+			 i ++
+
+			 if i== 1 {
+				 if name != "href" {
+					t.Errorf("TestOnTagAttr error")
+				 }
+				 if value != "#" {
+					t.Errorf("TestOnTagAttr error")
+				 }
+
+				 if isWhiteAttr != true {
+					t.Errorf("TestOnTagAttr error")
+				 }
+			 } else if i ==2 {
+				if name != "target" {
+					t.Errorf("TestOnTagAttr error")
+				 }
+				 if value != "_blank" {
+					t.Errorf("TestOnTagAttr error")
+				 }
+
+				 if isWhiteAttr != true {
+					t.Errorf("TestOnTagAttr error")
+				 }
+			 }else if i ==3 {
+				if name != "checked" {
+					t.Errorf("TestOnTagAttr error")
+				 }
+				 if value != "" {
+					t.Errorf("TestOnTagAttr error")
+				 }
+
+				 if isWhiteAttr != false {
+					t.Errorf("TestOnTagAttr error")
+				 }
+			 }else if i ==4 {
+				if name != "data-a" {
+					t.Errorf("TestOnTagAttr error")
+				 }
+				 if value != "b" {
+					t.Errorf("TestOnTagAttr error")
+				 }
+
+				 if isWhiteAttr != false {
+					t.Errorf("TestOnTagAttr error")
+				 }
+			 } else {
+				t.Errorf("TestOnTagAttr error")
+
+			 }
+			 return nil
+		},
+	})
+
+	if html != "<a href=\"#\" target=\"_blank\">hi</a>" {
+		t.Errorf("TestOnTagAttr error")
+	}
+}
+
+
+func TestOnTagAttr2(t *testing.T) {
+	source := "<a href=\"#\" target=\"_blank\" checked data-a=\"b\">hi</a href=\"d\">"
+
+	// i := 0
+	html := FilterXSS(source,XssOption{
+		OnTagAttr: func(tag, name, value string ,isWhiteAttr bool) *string {
+			  ret := "$"+name+"$"
+			  return &ret
+		},
+	})
+
+	if html != "<a $href$ $target$ $checked$ $data-a$>hi</a>" {
+		t.Errorf("TestOnTagAttr error")
+	}
+}
+
+
+func TestOnIgnoreTagAttr(t *testing.T) {
+	source := "<a href=\"#\" target=\"_blank\" checked data-a=\"b\">hi</a href=\"d\">"
+
+	i := 0
+	html := FilterXSS(source,XssOption{
+		OnIgnoreTagAttr: func(tag, name, value string ,isWhiteAttr bool) *string {
+			 i++
+
+			 if tag != "a" {
+				t.Errorf("TestOnIgnoreTagAttr error")
+			 }
+
+			 if i== 1 {
+				 if name != "checked" {
+					t.Errorf("TestOnIgnoreTagAttr error")
+				 }
+				 if value != "" {
+					t.Errorf("TestOnIgnoreTagAttr error")
+				 }
+
+				 if isWhiteAttr != false {
+					t.Errorf("TestOnIgnoreTagAttr error")
+				 }
+			 } else if i ==2 {
+				if name != "data-a" {
+					t.Errorf("TestOnIgnoreTagAttr error")
+				 }
+				 if value != "b" {
+					t.Errorf("TestOnIgnoreTagAttr error")
+				 }
+
+				 if isWhiteAttr != false {
+					t.Errorf("TestOnIgnoreTagAttr error")
+				 }
+			 } else {
+				t.Errorf("TestOnIgnoreTagAttr error")
+
+			 }
+			 return nil
+		},
+	})
+
+	if html != "<a href=\"#\" target=\"_blank\">hi</a>" {
+		t.Errorf("TestOnTagAttr error")
+
+	}
+}
+
+
+func TestOnIgnoreTagAttrWithReturn(t *testing.T) {
+	source := "<a href=\"#\" target=\"_blank\" checked data-a=\"b\">hi</a href=\"d\">"
+
+ 	html := FilterXSS(source,XssOption{
+		OnIgnoreTagAttr: func(tag, name, value string ,isWhiteAttr bool) *string {
+			  
+			 ret := "$"+name+"$"
+			 return &ret
+		},
+	})
+
+	if html != "<a href=\"#\" target=\"_blank\" $checked$ $data-a$>hi</a>" {
+		t.Errorf("TestOnTagAttr error")
+
+	}
+}
+func TestEscapeDefault(t *testing.T) {
+	source := "<x>yy</x><a>bb</a>"
+
+	html := FilterXSS(source,XssOption{})
+
+   if html != "&lt;x&gt;yy&lt;/x&gt;<a>bb</a>" {
+	   t.Errorf("TestEscapeDefault error")
+
+   }
+}
+
+func TestEscapeReturn(t *testing.T) {
+	source := "<x>yy</x><a>bb</a>"
+
+ 	html := FilterXSS(source,XssOption{
+		EscapeHTML: func(str string) string {
+			
+			ret := ""
+			if len(str) > 0 {
+				ret = "["+str+"]"
+			}
+			return ret
+		},
+	})
+
+	if html != "[<x>][yy][</x>]<a>[bb]</a>" {
+		t.Errorf("TestEscapeReturn error %s",html)
+
+	}
+}
+
+
+func TestSafeAttrValueDefault(t *testing.T) {
+	source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
+
+	html := FilterXSS(source,XssOption{})
+
+   if html != "<a href title=\"hi\">link</a>" {
+	   t.Errorf("TestSafeAttrValueReturn error")
+
+   }
+}
+
+func TestSafeAttrValueReturn(t *testing.T) {
+	source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"
+
+ 	html := FilterXSS(source,XssOption{
+		SafeAttrValue: func(tag, name, value string) string {
+			
+			ret := "$"+name+"$"
+			 
+			return ret
+		},
+	})
+
+	if html != "<a href=\"$href$\" title=\"$title$\">link</a>" {
+		t.Errorf("TestSafeAttrValueReturn error %s",html)
+
+	}
+}
+
+func TestStripIngoreTag(t *testing.T) {
+	source := "<x>yy</x><a>bb</a>"
+
+	html := FilterXSS(source,XssOption{ StripIgnoreTag:true})
+
+   if html != "yy<a>bb</a>" {
+	   t.Errorf("TestStripIngoreTag error %s",html )
+
+   }
+}
+
+func TestStripIngoreBodyTag(t *testing.T) {
+	source := "<a>link</a><x>haha</x><y>a<y></y>b</y>k"
+
+	html := FilterXSS(source,XssOption{ StripIgnoreTagBody:[]string{}})
+
+   if html != "<a>link</a>bk" {
+	   t.Errorf("TestStripIngoreTag error %s",html )
+
+   }
+}
+
+func TestStripIngoreBodyTag2(t *testing.T) {
+	source := "<a>link</a><x>haha</x><y>a<y></y>b</y>k"
+
+	html := FilterXSS(source,XssOption{ StripIgnoreTagBody:[]string{"x"}})
+
+   if html != "<a>link</a>&lt;y&gt;a&lt;y&gt;&lt;/y&gt;b&lt;/y&gt;k" {
+	   t.Errorf("TestStripIngoreBodyTag2 error %s",html )
+
+   }
+}
+
+
+func TestStripIngoreBodyTag3(t *testing.T) {
+	source := "<a>link</a><x>haha</x><y>a<y></y>b</y>k"
+
+	html := FilterXSS(source,XssOption{ 
+		StripIgnoreTagBody:[]string{"x"},
+		OnIgnoreTag: func(tag, html string, options TagOption) *string {
+			 
+			ret := "$"+tag+"$"
+			return &ret
+	   },
+	})
+
+   if html != "<a>link</a>$y$a$y$$y$b$y$k" {
+	   t.Errorf("TestStripIngoreBodyTag2 error %s",html )
+
+   }
+}
+
+func TestStripIngoreBodyTag4(t *testing.T) {
+	source := "<scri" + "pt>alert(/xss/);</scri" + "pt>"
+
+	html := FilterXSS(source,XssOption{ 
+		StripIgnoreTagBody:[]string{"script"},
+		StripIgnoreTag:true,
+	})
+
+   if html != "" {
+	   t.Errorf("TestStripIngoreBodyTag4 error %s",html )
+
+   }
+}
+
+func TestStripIngoreBodyTag5(t *testing.T) {
+	source := "ooxx<scri" + "pt>alert(/xss/);</scri" + "pt>"
+
+	html := FilterXSS(source,XssOption{ 
+		StripIgnoreTagBody:[]string{"script"},
+		StripIgnoreTag:true,
+	})
+
+   if html != "ooxx" {
+	   t.Errorf("TestStripIngoreBodyTag4 error %s",html )
+
+   }
+}
+
+
+func TestOnTagSanitizeHtml(t *testing.T) {
+
+	source := "<a target= \" href=\"><script>alert(2)</script>\"><span>"
+
+	html := FilterXSS(source,XssOption{ 
+		OnTag: func(tag, html string, options TagOption) *string {
+			if options.IsWhite  && "a" == tag {
+				if options.IsClosing  {
+					ret :=   "</span></a>"
+					return &ret
+				}
+				ret := html + "<span>"
+				return &ret
+			}
+			return nil
+		},
+	})
+
+   if html != "<a target= \" href=\"><span>&lt;script&gt;alert(2)&lt;/script&gt;\"&gt;<span>" {
+	   t.Errorf("TestStripIngoreBodyTag4 error %s",html )
+   }
+}
