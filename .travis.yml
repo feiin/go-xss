@@ -7,5 +7,5 @@ go:
   - 1.12.x
 
 # run tests w/ coverage
-script:
-  - $GOPATH/bin/goveralls -service=travis-ci
+# script:
+#   - $GOPATH/bin/goveralls -service=travis-ci
