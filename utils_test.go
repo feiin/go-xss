@@ -18,14 +18,14 @@ func TestSpaceIndex(t *testing.T) {
 }
 
 func TestStripBlankChar(t *testing.T) {
-	x := "!---a\u0000\u0001\u0002\u0003\r\n b----"
+	x := "!---a\u0000\u0001\u0002\u0003\r\n b----" + string(rune(127)) + string(rune(9))
 
 	result := stripBlankChar(x)
 	if result != "!---a\r\n b----" {
 		t.Errorf("stripBlankChar err %s", result)
 
 	}
-	// t.Logf("stripBlankChar %+v", result)
+
 }
 
 func TestStripCommentTag(t *testing.T) {

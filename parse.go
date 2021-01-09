@@ -270,7 +270,6 @@ func findNextEqual(str string, i int) int {
 
 	}
 	return -1
-
 }
 
 func findBeforeEqual(str string, i int) int {
@@ -288,5 +287,4 @@ func findBeforeEqual(str string, i int) int {
 
 	}
 	return -1
-
 }
