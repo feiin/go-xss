@@ -11,17 +11,14 @@ import (
 
 
 type Xss struct {
-	options *XssOption
+	options XssOption
 }
 
 //NewXss 
 func NewXss(options XssOption) *Xss {
-	xss := &Xss{
-		options: &options,
-		
-	}
-	defaultOption := NewDefaultXssOption()
+	
 
+	defaultOption := NewDefaultXssOption()
 	if options.OnTag == nil {
 		options.OnTag = defaultOption.OnTag
 	}
@@ -62,6 +59,10 @@ func NewXss(options XssOption) *Xss {
 		options.WhiteList = defaultOption.WhiteList
 	}
 
+	xss := &Xss{
+		options: options,
+		
+	}
 	return xss
 
 }
@@ -212,3 +213,9 @@ func (x *Xss) Process(html string) (string) {
 	return retHTML
 }
 
+
+//FilterXSS filter xss func
+func FilterXSS(html string, options XssOption) string {
+	xss := NewXss(options)
+	return xss.Process(html)
+}

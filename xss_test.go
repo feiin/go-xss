@@ -918,3 +918,15 @@ func TestProcess_Evasion_Cheat_Sheet(t *testing.T) {
 	}
 
 }
+
+func TestFilterXSS(t *testing.T) {
+	 
+	result := FilterXSS("<!--[if gte IE 4]><SCRI" +
+	"PT>alert('XSS');</SCRI" +
+	"PT><![endif]--> END",XssOption{})
+
+	if result != " END" {
+		t.Errorf("TestFilterXSS  error %s",result)
+
+	}
+}
