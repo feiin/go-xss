@@ -22,19 +22,20 @@ func Example() {
 			},
 	})
 	fmt.Printf("%s\nconvert to:\n%s", source, html);
-}
 
-func Example2() {
 
-	source := "<div a=\"1\" b=\"2\" data-a=\"3\" data-b=\"4\">hello</div>";
+	//To avoid passing options every time, you can also do it in a faster way by creating a NewXSS instance:
+
+	source = "<div a=\"1\" b=\"2\" data-a=\"3\" data-b=\"4\">hello</div>";
 
 	options := xss.XssOption{}
 
 	x := xss.NewXSS(options)
 	
-	html := x.Process(source)
+	html = x.Process(source)
 	fmt.Printf("%s\nconvert to:\n%s", source, html);
 }
+
 
 func ExampleNew() {
 	source := "<a href=\"javascript:alert(/xss/)\" title=\"hi\">link</a>"

@@ -4,9 +4,20 @@ xss is a module used to filter input from users to prevent XSS attacks. ([What i
 
 
 [中文说明](./README.md)
+
+[go-xss godoc](https://godoc.org/github.com/feiin/go-xss#example-package)
+
 ## Features
 Specifies HTML tags and their attributes allowed with whitelist
 Handle any tags or attributes using custom function.
+
+## Install
+
+```
+go get -u github.com/feiin/go-xss
+
+```
+
 
 ## Usages
 

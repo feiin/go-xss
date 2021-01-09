@@ -8,6 +8,10 @@ go-xss是一个用于对用户输入的内容进行过滤，以避免遭受 XSS 
 [ENGLISH](./README.en.md)
 
 
+[go-xss godoc](https://godoc.org/github.com/feiin/go-xss#example-package)
+
+
+
 ## 特性
 
 * 白名单控制允许的 HTML 标签及各标签的属性
@@ -15,7 +19,12 @@ go-xss是一个用于对用户输入的内容进行过滤，以避免遭受 XSS 
 
 ## 性能
 
+## 安装
 
+```
+go get -u github.com/feiin/go-xss
+
+```
 ## 使用
 
 ```golang
