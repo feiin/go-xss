@@ -1,3 +1,10 @@
+[![GoDoc](https://godoc.org/github.com/feiin/go-xss?status.svg)](https://godoc.org/github.com/feiin/go-xss)
+[![Build Status](https://travis-ci.org/feiin/go-xss.svg?branch=main)](https://travis-ci.org/feiin/go-xss)
+[![Go Report Card](https://goreportcard.com/badge/github.com/feiin/go-xss)](https://goreportcard.com/report/github.com/feiin/go-xss)
+[![Coverage Status](https://coveralls.io/repos/github/feiin/go-xss/badge.svg?branch=main)](https://coveralls.io/github/feiin/go-xss?branch=main)
+[![GitHub license](https://img.shields.io/github/license/feiin/go-xss)](https://github.com/feiin/go-xss/blob/main/LICENSE)
+
+
 # go-xss
 
 xss is a module used to filter input from users to prevent XSS attacks. ([What is XSS attack?](http://baike.baidu.com/view/2161269.htm))
