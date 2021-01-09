@@ -3,19 +3,17 @@ package xss
 import (
 	// "errors"
 	// "bytes"
-	"strings"
 	"github.com/feiin/pkg/arrays"
- 	// "io"
+	"strings"
+	// "io"
 )
-
 
 type Xss struct {
 	options XssOption
 }
 
-//NewXSS 
+//NewXSS
 func NewXSS(options XssOption) *Xss {
-	
 
 	defaultOption := NewDefaultXssOption()
 	if options.OnTag == nil {
@@ -42,7 +40,6 @@ func NewXSS(options XssOption) *Xss {
 		options.SafeAttrValue = defaultOption.SafeAttrValue
 	}
 
-
 	if options.WhiteList == nil {
 		options.WhiteList = defaultOption.WhiteList
 	}
@@ -53,62 +50,60 @@ func NewXSS(options XssOption) *Xss {
 
 	xss := &Xss{
 		options: options,
-		
 	}
 	return xss
 
 }
 
 type AttrResult struct {
-	Html string
+	Html    string
 	Closing bool
 }
 
 func GetAttrs(html string) AttrResult {
 	i := spaceIndex(html)
 	if i == -1 {
-		return AttrResult { 
-			Html:"",
+		return AttrResult{
+			Html:    "",
 			Closing: html[len(html)-2] == '/',
 		}
 	}
-	html = strings.TrimSpace(html[i+1:len(html)-1])
+	html = strings.TrimSpace(html[i+1 : len(html)-1])
 
 	isClosing := html[len(html)-1] == '/'
 
 	if isClosing {
-		html = strings.TrimSpace(html[0:len(html)-1])
+		html = strings.TrimSpace(html[0 : len(html)-1])
 	}
-	return AttrResult {
-		Html:html,
-		Closing:isClosing,
+	return AttrResult{
+		Html:    html,
+		Closing: isClosing,
 	}
 
-} 
+}
 
 //Process 处理xss
-func (x *Xss) Process(html string) (string) {
+func (x *Xss) Process(html string) string {
 
 	if len(html) < 3 {
 		return html
 	}
- 
+
 	//cannot use these two options "stripIgnoreTag" and "onIgnoreTag" at the same time'
 	if x.options.StripIgnoreTag {
 		x.options.OnIgnoreTag = onIgnoreTagStripAll
 	}
 
-
 	onIgnoreTag := x.options.OnIgnoreTag
-	escapeHTML :=  x.options.EscapeHTML
+	escapeHTML := x.options.EscapeHTML
 	onTag := x.options.OnTag
 	onTagAttr := x.options.OnTagAttr
 	safeAttrValue := x.options.SafeAttrValue
 	OnIgnoreTagAttr := x.options.OnIgnoreTagAttr
 	whiteList := x.options.WhiteList
 
-  	//remove invisible characters
-  	if x.options.StripBlankChar {
+	//remove invisible characters
+	if x.options.StripBlankChar {
 		html = stripBlankChar(html)
 	}
 
@@ -117,33 +112,28 @@ func (x *Xss) Process(html string) (string) {
 		html = stripCommentTag(html)
 	}
 
-	
-
-
-
 	// if enable stripIgnoreTagBody
 	var stripIgnoreTagBody StripTagBodyResult
 	if x.options.StripIgnoreTagBody != nil {
 
- 		stripIgnoreTagBody = x.options.StripTagBody(x.options.StripIgnoreTagBody, onIgnoreTag)
- 		onIgnoreTag = stripIgnoreTagBody.OnIgnoreTag
+		stripIgnoreTagBody = x.options.StripTagBody(x.options.StripIgnoreTagBody, onIgnoreTag)
+		onIgnoreTag = stripIgnoreTagBody.OnIgnoreTag
 	}
 
-	
-	retHTML := parseTag(html,func(sourcePosition int,position int,tag string,html string, isClosing bool) string {
+	retHTML := parseTag(html, func(sourcePosition int, position int, tag string, html string, isClosing bool) string {
 		isWhite := false
 
 		if _, ok := whiteList[tag]; ok {
 			isWhite = true
 		}
-		info := TagOption {
+		info := TagOption{
 			SourcePosition: sourcePosition,
-			Position: position,
-			IsClosing: isClosing,
-			IsWhite: isWhite,
+			Position:       position,
+			IsClosing:      isClosing,
+			IsWhite:        isWhite,
 		}
 
-		ret := onTag(tag, html,info)
+		ret := onTag(tag, html, info)
 
 		if ret != nil {
 			return *ret
@@ -151,46 +141,46 @@ func (x *Xss) Process(html string) (string) {
 
 		if info.IsWhite {
 			if info.IsClosing {
-				return "</" + tag + ">";
+				return "</" + tag + ">"
 			}
 
 			attrs := GetAttrs(html)
 
 			var whiteAttrList []string
 
-			if whiteList, ok := whiteList[tag];ok {
+			if whiteList, ok := whiteList[tag]; ok {
 				whiteAttrList = whiteList
 			}
 
-			attrsHTML := parseAttr(attrs.Html, func(name,value string) string{
+			attrsHTML := parseAttr(attrs.Html, func(name, value string) string {
 				isWhiteAttr := arrays.ContainsString(whiteAttrList, name) != -1
 
-				ret := onTagAttr(tag, name, value,isWhiteAttr)
+				ret := onTagAttr(tag, name, value, isWhiteAttr)
 
 				if ret != nil {
 					return *ret
 				}
 
 				if isWhiteAttr {
-					value = safeAttrValue(tag,name, value)
+					value = safeAttrValue(tag, name, value)
 					if len(value) > 0 {
-						return name + "=\""+value+"\""
+						return name + "=\"" + value + "\""
 					} else {
 						return name
 					}
 				} else {
-					ret := OnIgnoreTagAttr(tag,name,value, isWhiteAttr)
+					ret := OnIgnoreTagAttr(tag, name, value, isWhiteAttr)
 					if ret != nil {
 						return *ret
 					}
 					return ""
-					
-				}
- 			})
 
-			html := "<"+tag
+				}
+			})
+
+			html := "<" + tag
 			if len(attrsHTML) > 0 {
-				html += " "+attrsHTML
+				html += " " + attrsHTML
 			}
 
 			if attrs.Closing {
@@ -200,15 +190,14 @@ func (x *Xss) Process(html string) (string) {
 			html += ">"
 			return html
 		} else {
-			ret := onIgnoreTag(tag,html ,info)
+			ret := onIgnoreTag(tag, html, info)
 			if ret != nil {
 				return *ret
 			}
-			return escapeHTML(html);
+			return escapeHTML(html)
 		}
 
 	}, escapeHTML)
-
 
 	if x.options.StripIgnoreTagBody != nil {
 		retHTML = stripIgnoreTagBody.Remove(retHTML)
@@ -216,7 +205,6 @@ func (x *Xss) Process(html string) (string) {
 
 	return retHTML
 }
-
 
 //FilterXSS filter xss func
 func FilterXSS(html string, options XssOption) string {
