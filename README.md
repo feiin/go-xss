@@ -1,4 +1,5 @@
 [![GoDoc](https://godoc.org/github.com/feiin/go-xss?status.svg)](https://godoc.org/github.com/feiin/go-xss)
+[![Build Status](https://travis-ci.org/feiin/go-xss.svg?branch=main)](https://travis-ci.org/feiin/go-xss)
 
 # go-xss 根据白名单过滤 HTML(防止 XSS 攻击)
 
