@@ -1,6 +1,5 @@
 package xss
 
-
 import (
 	"strconv"
 	"strings"
@@ -13,7 +12,7 @@ type XssOption struct {
 
 	// remove html comments
 	AllowCommentTag bool
- 
+
 	StripIgnoreTag bool
 
 	// StripIgnoreTagBody
@@ -21,26 +20,24 @@ type XssOption struct {
 
 	WhiteList map[string][]string
 
-
 	OnTag func(tag, html string, options TagOption) *string
 
 	OnIgnoreTag func(tag, html string, options TagOption) *string
 
-	OnTagAttr func(tag, name, value string ,isWhiteAttr bool) *string
+	OnTagAttr func(tag, name, value string, isWhiteAttr bool) *string
 
+	OnIgnoreTagAttr func(tag, name, value string, isWhiteAttr bool) *string
 
-	OnIgnoreTagAttr func(tag,name, value string,isWhiteAttr bool) *string
-
-	StripTagBody func(tags []string,next OnIgnoreTagFunc) StripTagBodyResult
+	StripTagBody  func(tags []string, next OnIgnoreTagFunc) StripTagBodyResult
 	SafeAttrValue func(tag, name, value string) string
-	EscapeHTML func(html string) string
+	EscapeHTML    func(html string) string
 }
 
 type TagOption struct {
 	SourcePosition int
-	Position int
-	IsClosing bool
-	IsWhite bool
+	Position       int
+	IsClosing      bool
+	IsWhite        bool
 }
 
 //NewXssOption
@@ -60,122 +57,119 @@ func NewDefaultXssOption() XssOption {
 	defaultOption.OnIgnoreTagAttr = onIgnoreTagAttr
 	defaultOption.EscapeHTML = escapeHTML
 	defaultOption.StripTagBody = stripTagBody
-	defaultOption.SafeAttrValue = safeAttrValue 
+	defaultOption.SafeAttrValue = safeAttrValue
 
 	return defaultOption
 }
 
-
-
-type OnIgnoreTagFunc func(tag string,html string, options TagOption) *string
+type OnIgnoreTagFunc func(tag string, html string, options TagOption) *string
 
 type StripTagBodyResult struct {
 	OnIgnoreTag OnIgnoreTagFunc
-	Remove  func(html string) string
+	Remove      func(html string) string
 }
+
 //GetDefaultWhiteList 默认白名单
 func GetDefaultWhiteList() map[string][]string {
 
-	result :=  map[string][]string {
-	"a": {"target", "href", "title"},
-    "abbr": {"title"},
-    "address": {},
-    "area": {"shape", "coords", "href", "alt"},
-    "article": {},
-    "aside": {},
-    "audio": {"autoplay", "controls", "loop", "preload", "src"},
-    "b": {},
-    "bdi": {"dir"},
-    "bdo": {"dir"},
-    "big": {},
-    "blockquote": {"cite"},
-    "br": {},
-    "caption": {},
-    "center": {},
-    "cite": {},
-    "code": {},
-    "col": {"align", "valign", "span", "width"},
-    "colgroup": {"align", "valign", "span", "width"},
-    "dd": {},
-    "del": {"datetime"},
-    "details": {"open"},
-    "div": {},
-    "dl": {},
-    "dt": {},
-    "em": {},
-    "font": {"color", "size", "face"},
-    "footer": {},
-    "h1": {},
-    "h2": {},
-    "h3": {},
-    "h4": {},
-    "h5": {},
-    "h6": {},
-    "header": {},
-    "hr": {},
-    "i": {},
-    "img": {"src", "alt", "title", "width", "height"},
-    "ins": {"datetime"},
-    "li": {},
-    "mark": {},
-    "nav": {},
-    "ol": {},
-    "p": {},
-    "pre": {},
-    "s": {},
-    "section": {},
-    "small": {},
-    "span": {},
-    "sub": {},
-    "sup": {},
-    "strong": {},
-    "table": {"width", "border", "align", "valign"},
-    "tbody": {"align", "valign"},
-    "td": {"width", "rowspan", "colspan", "align", "valign"},
-    "tfoot": {"align", "valign"},
-    "th": {"width", "rowspan", "colspan", "align", "valign"},
-    "thead": {"align", "valign"},
-    "tr": {"rowspan", "align", "valign"},
-    "tt": {},
-    "u": {},
-    "ul": {},
-    "video": {"autoplay", "controls", "loop", "preload", "src", "height", "width"},
+	result := map[string][]string{
+		"a":          {"target", "href", "title"},
+		"abbr":       {"title"},
+		"address":    {},
+		"area":       {"shape", "coords", "href", "alt"},
+		"article":    {},
+		"aside":      {},
+		"audio":      {"autoplay", "controls", "loop", "preload", "src"},
+		"b":          {},
+		"bdi":        {"dir"},
+		"bdo":        {"dir"},
+		"big":        {},
+		"blockquote": {"cite"},
+		"br":         {},
+		"caption":    {},
+		"center":     {},
+		"cite":       {},
+		"code":       {},
+		"col":        {"align", "valign", "span", "width"},
+		"colgroup":   {"align", "valign", "span", "width"},
+		"dd":         {},
+		"del":        {"datetime"},
+		"details":    {"open"},
+		"div":        {},
+		"dl":         {},
+		"dt":         {},
+		"em":         {},
+		"font":       {"color", "size", "face"},
+		"footer":     {},
+		"h1":         {},
+		"h2":         {},
+		"h3":         {},
+		"h4":         {},
+		"h5":         {},
+		"h6":         {},
+		"header":     {},
+		"hr":         {},
+		"i":          {},
+		"img":        {"src", "alt", "title", "width", "height"},
+		"ins":        {"datetime"},
+		"li":         {},
+		"mark":       {},
+		"nav":        {},
+		"ol":         {},
+		"p":          {},
+		"pre":        {},
+		"s":          {},
+		"section":    {},
+		"small":      {},
+		"span":       {},
+		"sub":        {},
+		"sup":        {},
+		"strong":     {},
+		"table":      {"width", "border", "align", "valign"},
+		"tbody":      {"align", "valign"},
+		"td":         {"width", "rowspan", "colspan", "align", "valign"},
+		"tfoot":      {"align", "valign"},
+		"th":         {"width", "rowspan", "colspan", "align", "valign"},
+		"thead":      {"align", "valign"},
+		"tr":         {"rowspan", "align", "valign"},
+		"tt":         {},
+		"u":          {},
+		"ul":         {},
+		"video":      {"autoplay", "controls", "loop", "preload", "src", "height", "width"},
 	}
 
 	return result
 }
 
 func onTag(tag, html string, options TagOption) *string {
-	//do nothing 
+	//do nothing
 	return nil
 }
 
-func onTagAttr(tag, name, value string,isWhiteAttr bool) *string {
-	//do nothing 
+func onTagAttr(tag, name, value string, isWhiteAttr bool) *string {
+	//do nothing
 	return nil
 }
-
 
 func onIgnoreTag(tag, html string, options TagOption) *string {
 	return nil
 }
 
-func onIgnoreTagAttr(tag,name, value string,isWhiteAttr bool) *string {
+func onIgnoreTagAttr(tag, name, value string, isWhiteAttr bool) *string {
 	return nil
 }
 
+func stripTagBody(tags []string, next OnIgnoreTagFunc) StripTagBodyResult {
 
-func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
- 
 	isRemoveAllTag := len(tags) == 0
 
-	var isRemoveTag = func (tag string) bool {
+	var isRemoveTag = func(tag string) bool {
 		if isRemoveAllTag {
 			return true
 		}
 
 		for _, item := range tags {
-			if item ==  tag {
+			if item == tag {
 				return true
 			}
 		}
@@ -185,26 +179,25 @@ func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 	var removeList [][]int
 	posStart := -1
 
-	
 	result := StripTagBodyResult{}
 
-	result.OnIgnoreTag = func(tag string,html string, options TagOption) *string {
+	result.OnIgnoreTag = func(tag string, html string, options TagOption) *string {
 
 		if isRemoveTag(tag) {
 			if options.IsClosing {
 
 				var ret = "[/removed]"
 				var end = options.Position + len(ret)
-				  
+
 				if posStart == -1 {
-					removeList = append(removeList,[]int{options.Position, end})
+					removeList = append(removeList, []int{options.Position, end})
 				} else {
-					removeList = append(removeList,[]int{posStart,end})
+					removeList = append(removeList, []int{posStart, end})
 				}
 
 				posStart = -1
 				return &ret
-			} 
+			}
 
 			if posStart == -1 {
 				posStart = options.Position
@@ -213,7 +206,7 @@ func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 			return &ret
 
 		}
-		return next(tag,html, options)
+		return next(tag, html, options)
 
 	}
 
@@ -225,24 +218,23 @@ func stripTagBody(tags []string,next OnIgnoreTagFunc) StripTagBodyResult{
 		}
 
 		var lastPos = 0
-		for _,item := range removeList {
+		for _, item := range removeList {
 
 			rethtml += html[lastPos:item[0]]
 			lastPos = item[1]
 		}
-   
-      	rethtml += html[lastPos:];
-      	return rethtml;
+
+		rethtml += html[lastPos:]
+		return rethtml
 	}
 
 	return result
-	
-}
 
+}
 
 func isSafeLinkValue(value string) bool {
 
-	vl :=len(value)
+	vl := len(value)
 	if vl == 0 {
 		return true
 	}
@@ -267,16 +259,15 @@ func isSafeLinkValue(value string) bool {
 		return true
 	}
 
-
-	if vl >= 7 && (value[0:7] == "http://" || value[0:7] == "mailto:")  {
+	if vl >= 7 && (value[0:7] == "http://" || value[0:7] == "mailto:") {
 		return true
 	}
 
-	if vl >= 9 && (value[0:8] == "https://")  {
+	if vl >= 9 && (value[0:8] == "https://") {
 		return true
 	}
 
-	if vl >= 11 && (value[0:11] == "data:image/")  {
+	if vl >= 11 && (value[0:11] == "data:image/") {
 		return true
 	}
 
@@ -286,19 +277,18 @@ func isSafeLinkValue(value string) bool {
 func safeAttrValue(tag, name, value string) string {
 
 	value = FriendlyAttrValue(value)
-	if name == "href" || name == "src" { 
+	if name == "href" || name == "src" {
 
 		value = strings.TrimSpace(value)
 		if value == "#" {
 			return "#"
 		}
 
- 
 		if !isSafeLinkValue(value) {
 			return ""
 		}
 
-	} else if  name == "background" && regDefaultOnTagAttr4.MatchString(value) {
+	} else if name == "background" && regDefaultOnTagAttr4.MatchString(value) {
 		return ""
 	} else if name == "style" {
 
@@ -322,17 +312,16 @@ func safeAttrValue(tag, name, value string) string {
 
 //FriendlyAttrValue get friendly attribute value
 func FriendlyAttrValue(str string) string {
- 	str = unescapeQuote(str)
+	str = unescapeQuote(str)
 	str = escapeHTMLEntities(str)
 	str = escapeDangerHTML5Entities(str)
 	str = clearNonPrintableCharacter(str)
 	return str
 }
 
-
-//unescapeQuote unescape double quote 
+//unescapeQuote unescape double quote
 func unescapeQuote(str string) string {
-	return regQuote2.ReplaceAllString(str,"\"")
+	return regQuote2.ReplaceAllString(str, "\"")
 }
 
 //escapeHtmlEntities
@@ -345,15 +334,15 @@ func escapeHTMLEntities(str string) string {
 		}
 
 		if input[0] == 'x' || input[0] == 'X' {
-			i,err := strconv.ParseInt(input[1:],16,32)
+			i, err := strconv.ParseInt(input[1:], 16, 32)
 			if err == nil {
 
 				return string(i)
 			}
 			return ""
-			
+
 		}
-		i,err := strconv.Atoi(input)
+		i, err := strconv.Atoi(input)
 		if err == nil {
 			return string(i)
 		}
@@ -364,21 +353,21 @@ func escapeHTMLEntities(str string) string {
 
 //escapeDangerHTML5Entities
 func escapeDangerHTML5Entities(str string) string {
-   return regAttrNewLine.ReplaceAllString(regAttrValueColon.ReplaceAllString(str,":")," ")
+	return regAttrNewLine.ReplaceAllString(regAttrValueColon.ReplaceAllString(str, ":"), " ")
 }
 
 //clearNonPrintableCharacter
 func clearNonPrintableCharacter(str string) string {
 	chs := []rune(str)
- 
+
 	result := []rune{}
 
 	for _, item := range chs {
 
 		if item < 32 {
-			result= append(result,rune(' '))
+			result = append(result, rune(' '))
 		} else {
-			result= append(result,item)
+			result = append(result, item)
 		}
 
 	}
@@ -386,16 +375,14 @@ func clearNonPrintableCharacter(str string) string {
 	return strings.TrimSpace(string(result))
 }
 
-
 func escapeQuote(str string) string {
-	return regQuote.ReplaceAllString(str,"&quot;")
+	return regQuote.ReplaceAllString(str, "&quot;")
 }
 
 //escapeHTML
 func escapeHTML(html string) string {
-	return regGT.ReplaceAllString(regLT.ReplaceAllString(html,"&lt;"),"&gt;")
+	return regGT.ReplaceAllString(regLT.ReplaceAllString(html, "&lt;"), "&gt;")
 }
-
 
 func EscapeAttrValue(str string) string {
 	str = escapeQuote(str)
@@ -406,5 +393,5 @@ func EscapeAttrValue(str string) string {
 
 func onIgnoreTagStripAll(tag, html string, options TagOption) *string {
 	ret := ""
-	return &ret;
+	return &ret
 }
