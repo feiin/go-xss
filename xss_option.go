@@ -360,19 +360,21 @@ func escapeDangerHTML5Entities(str string) string {
 func clearNonPrintableCharacter(str string) string {
 	chs := []rune(str)
 
-	result := []rune{}
-
+	// result := make([]rune,len(str))
+	var b strings.Builder
 	for _, item := range chs {
 
 		if item < 32 {
-			result = append(result, rune(' '))
+			b.WriteRune(rune(' '))
+			// result = append(result, rune(' '))
 		} else {
-			result = append(result, item)
+			b.WriteRune(item)
+			// result = append(result, item)
 		}
 
 	}
 
-	return strings.TrimSpace(string(result))
+	return b.String() //strings.TrimSpace(string(result))
 }
 
 func escapeQuote(str string) string {
@@ -381,7 +383,21 @@ func escapeQuote(str string) string {
 
 //escapeHTML
 func escapeHTML(html string) string {
-	return regGT.ReplaceAllString(regLT.ReplaceAllString(html, "&lt;"), "&gt;")
+
+	// return regGT.ReplaceAllString(regLT.ReplaceAllString(html, "&lt;"), "&gt;")
+	var b strings.Builder
+	for _, item := range html {
+		if item == '<' {
+			b.WriteString("&lt;")
+		} else if item == '>' {
+			b.WriteString("&gt;")
+
+		} else {
+			b.WriteRune(item)
+		}
+	}
+
+	return b.String()
 }
 
 func EscapeAttrValue(str string) string {

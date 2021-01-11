@@ -44,7 +44,8 @@ func getTagName(html string) string {
 //parseTag
 func parseTag(html string, onTag OnTagFunc, escapeHtml escapeFunc) string {
 
-	rethtml := ""
+	// rethtml := ""
+	var retHTML strings.Builder
 	lastPos := 0
 	tagStart := -1
 	quoteStart := ""
@@ -66,18 +67,22 @@ chariterator:
 			if quoteStart == "" {
 
 				if c == "<" {
-					rethtml += escapeHtml(html[lastPos:currentPos])
+					// rethtml += escapeHtml(html[lastPos:currentPos])
+					retHTML.WriteString(escapeHtml(html[lastPos:currentPos]))
 					tagStart = currentPos
 					lastPos = currentPos
 					continue
 				}
 
 				if c == ">" {
-					rethtml += escapeHtml(html[lastPos:tagStart])
+					// rethtml += escapeHtml(html[lastPos:tagStart])
+					retHTML.WriteString(escapeHtml(html[lastPos:tagStart]))
+
 					currentHtml = html[tagStart : currentPos+1]
 					currentTagName = getTagName(currentHtml)
 
-					rethtml += onTag(tagStart, len(rethtml), currentTagName, currentHtml, isClosing(currentHtml))
+					// rethtml += onTag(tagStart, len(rethtml), currentTagName, currentHtml, isClosing(currentHtml))
+					retHTML.WriteString(onTag(tagStart, retHTML.Len(), currentTagName, currentHtml, isClosing(currentHtml)))
 
 					lastPos = currentPos + 1
 					tagStart = -1
@@ -116,10 +121,11 @@ chariterator:
 	}
 
 	if lastPos < len(html) {
-		rethtml += escapeHtml(html[lastPos:])
+		// rethtml += escapeHtml(html[lastPos:])
+		retHTML.WriteString(escapeHtml(html[lastPos:]))
 	}
 
-	return rethtml
+	return retHTML.String()
 
 }
 

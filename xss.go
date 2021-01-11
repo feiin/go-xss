@@ -178,17 +178,22 @@ func (x *Xss) Process(html string) string {
 				}
 			})
 
-			html := "<" + tag
+			var html strings.Builder
+			// html := "<" + tag
+			html.WriteString("<" + tag)
 			if len(attrsHTML) > 0 {
-				html += " " + attrsHTML
+				// html += " " + attrsHTML
+				html.WriteString(" " + attrsHTML)
 			}
 
 			if attrs.Closing {
-				html += " /"
+				// html += " /"
+				html.WriteString(" /")
 			}
 
-			html += ">"
-			return html
+			// html += ">"
+			html.WriteString(">")
+			return html.String()
 		} else {
 			ret := onIgnoreTag(tag, html, info)
 			if ret != nil {
