@@ -23,7 +23,7 @@ func BenchmarkSpeed(b *testing.B) {
 
 	runtime.GOMAXPROCS(1)
 
-	file := "./index.html.txt"
+	file := "./index.html"
 	content, _ := ioutil.ReadFile(file)
 
 	html := string(content)
