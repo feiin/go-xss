@@ -6,8 +6,8 @@ import (
 	"time"
 	// "fmt"
 	"github.com/feiin/go-xss"
-	// "runtime"
 	"os"
+	"runtime"
 	"runtime/pprof"
 )
 
@@ -21,7 +21,7 @@ func cpu() {
 
 func BenchmarkSpeed(b *testing.B) {
 
-	// runtime.GOMAXPROCS(1)
+	runtime.GOMAXPROCS(1)
 
 	file := "./index.html"
 	content, _ := ioutil.ReadFile(file)

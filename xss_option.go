@@ -358,23 +358,19 @@ func escapeDangerHTML5Entities(str string) string {
 
 //clearNonPrintableCharacter
 func clearNonPrintableCharacter(str string) string {
-	chs := []rune(str)
 
-	// result := make([]rune,len(str))
 	var b strings.Builder
-	for _, item := range chs {
+	for _, item := range str {
 
 		if item < 32 {
 			b.WriteRune(rune(' '))
-			// result = append(result, rune(' '))
 		} else {
 			b.WriteRune(item)
-			// result = append(result, item)
 		}
 
 	}
 
-	return b.String() //strings.TrimSpace(string(result))
+	return b.String()
 }
 
 func escapeQuote(str string) string {
