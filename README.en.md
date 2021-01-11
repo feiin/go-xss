@@ -17,6 +17,10 @@ xss is a module used to filter input from users to prevent XSS attacks. ([What i
 Specifies HTML tags and their attributes allowed with whitelist
 Handle any tags or attributes using custom function.
 
+## Benchmark
+
+speed: 24MB/s
+
 ## Install
 
 ```
