@@ -12,7 +12,7 @@ go-xss is a module used to filter input from users to prevent XSS attacks
 go-xss是一个用于对用户输入的内容进行过滤，以避免遭受 XSS 攻击的模块（（[什么是 XSS 攻击？](http://baike.baidu.com/view/2161269.htm)）。主要用于论坛、博客、网上商店等等一些可允许用户录入页面排版、格式控制相关的 HTML 的场景，xss模块通过白名单来控制允许的标签及相关的标签属性，另外还提供了一系列的接口以便用户扩展，比其他同类模块更为灵活。
 
 
-[ENGLISH](./README.en.md)
+[English](./README.en.md) | 中文文档
  
 
 
