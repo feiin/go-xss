@@ -352,6 +352,10 @@ text: helloend
 ```
 
 
+## Inspirations
+
+- https://github.com/leizongmin/js-xss
+
 ## License
 
 MIT
