@@ -1506,3 +1506,16 @@ func TestOnTagSanitizeHtml(t *testing.T) {
 		t.Errorf("TestStripIngoreBodyTag4 error %s", html)
 	}
 }
+
+
+func TestMarkDown(t *testing.T) {
+	options := XssOption{
+		StripBlankChar: true,
+		EscapeHTML: func(html string) string {
+			return html
+		},
+	}
+	xss := NewXSS(options)
+	result := xss.Process("## xddd  > xxxxx <a>asfasdfsadf</a>")
+	t.Logf("TestMarkDown result:%s ",result)
+}

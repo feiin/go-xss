@@ -3,6 +3,7 @@ package xss
 import (
 	"strconv"
 	"strings"
+	"fmt"
 )
 
 type XssOption struct {
@@ -337,14 +338,14 @@ func escapeHTMLEntities(str string) string {
 
 			i, err := strconv.ParseInt(input[1:], 16, 32)
 			if err == nil {
-				return string(i)
+				return fmt.Sprintf("%c",i)
 			}
 			return ""
 
 		}
 		i, err := strconv.Atoi(input)
 		if err == nil {
-			return string(i)
+			return fmt.Sprintf("%c",i)
 		}
 
 		return ""
