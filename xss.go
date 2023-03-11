@@ -12,7 +12,7 @@ type Xss struct {
 	options XssOption
 }
 
-//NewXSS
+// NewXSS
 func NewXSS(options XssOption) *Xss {
 
 	defaultOption := NewDefaultXssOption()
@@ -82,7 +82,7 @@ func GetAttrs(html string) AttrResult {
 
 }
 
-//Process 处理xss
+// Process 处理xss
 func (x *Xss) Process(html string) string {
 
 	if len(html) < 3 {
@@ -153,7 +153,7 @@ func (x *Xss) Process(html string) string {
 			}
 
 			attrsHTML := parseAttr(attrs.Html, func(name, value string) string {
-				isWhiteAttr := arrays.ContainsString(whiteAttrList, name) != -1
+				isWhiteAttr := arrays.Contains(whiteAttrList, name) != -1
 
 				ret := onTagAttr(tag, name, value, isWhiteAttr)
 
@@ -211,7 +211,7 @@ func (x *Xss) Process(html string) string {
 	return retHTML
 }
 
-//FilterXSS filter xss func
+// FilterXSS filter xss func
 func FilterXSS(html string, options XssOption) string {
 	xss := NewXSS(options)
 	return xss.Process(html)
