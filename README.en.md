@@ -1,4 +1,5 @@
 [![GoDoc](https://godoc.org/github.com/feiin/go-xss?status.svg)](https://godoc.org/github.com/feiin/go-xss)
+[![Go](https://github.com/feiin/go-xss/actions/workflows/go.yml/badge.svg)](https://github.com/feiin/go-xss/actions/workflows/go.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/feiin/go-xss)](https://goreportcard.com/report/github.com/feiin/go-xss)
 [![Coverage Status](https://coveralls.io/repos/github/feiin/go-xss/badge.svg?branch=main)](https://coveralls.io/github/feiin/go-xss?branch=main)
 [![GitHub license](https://img.shields.io/github/license/feiin/go-xss)](https://github.com/feiin/go-xss/blob/main/LICENSE)
