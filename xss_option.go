@@ -1,9 +1,9 @@
 package xss
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
-	"fmt"
 )
 
 type XssOption struct {
@@ -41,13 +41,13 @@ type TagOption struct {
 	IsWhite        bool
 }
 
-//NewXssOption
+// NewXssOption
 func NewXssOption() XssOption {
 	option := XssOption{}
 	return option
 }
 
-//NewDefaultXssOption
+// NewDefaultXssOption
 func NewDefaultXssOption() XssOption {
 
 	defaultOption := XssOption{}
@@ -70,7 +70,7 @@ type StripTagBodyResult struct {
 	Remove      func(html string) string
 }
 
-//GetDefaultWhiteList 默认白名单
+// GetDefaultWhiteList 默认白名单
 func GetDefaultWhiteList() map[string][]string {
 
 	result := map[string][]string{
@@ -113,6 +113,7 @@ func GetDefaultWhiteList() map[string][]string {
 		"i":          {},
 		"img":        {"src", "alt", "title", "width", "height"},
 		"ins":        {"datetime"},
+		"kbd":        {},
 		"li":         {},
 		"mark":       {},
 		"nav":        {},
@@ -311,7 +312,7 @@ func safeAttrValue(tag, name, value string) string {
 	return value
 }
 
-//FriendlyAttrValue get friendly attribute value
+// FriendlyAttrValue get friendly attribute value
 func FriendlyAttrValue(str string) string {
 	str = unescapeQuote(str)
 	str = escapeHTMLEntities(str)
@@ -320,12 +321,12 @@ func FriendlyAttrValue(str string) string {
 	return str
 }
 
-//unescapeQuote unescape double quote
+// unescapeQuote unescape double quote
 func unescapeQuote(str string) string {
 	return regQuote2.ReplaceAllString(str, "\"")
 }
 
-//escapeHtmlEntities
+// escapeHtmlEntities
 func escapeHTMLEntities(str string) string {
 	return regAttrValue1.ReplaceAllStringFunc(str, func(input string) string {
 		input = input[2:]
@@ -338,26 +339,26 @@ func escapeHTMLEntities(str string) string {
 
 			i, err := strconv.ParseInt(input[1:], 16, 32)
 			if err == nil {
-				return fmt.Sprintf("%c",i)
+				return fmt.Sprintf("%c", i)
 			}
 			return ""
 
 		}
 		i, err := strconv.Atoi(input)
 		if err == nil {
-			return fmt.Sprintf("%c",i)
+			return fmt.Sprintf("%c", i)
 		}
 
 		return ""
 	})
 }
 
-//escapeDangerHTML5Entities
+// escapeDangerHTML5Entities
 func escapeDangerHTML5Entities(str string) string {
 	return regAttrNewLine.ReplaceAllString(regAttrValueColon.ReplaceAllString(str, ":"), " ")
 }
 
-//clearNonPrintableCharacter
+// clearNonPrintableCharacter
 func clearNonPrintableCharacter(str string) string {
 
 	var b strings.Builder
@@ -378,7 +379,7 @@ func escapeQuote(str string) string {
 	return regQuote.ReplaceAllString(str, "&quot;")
 }
 
-//escapeHTML
+// escapeHTML
 func escapeHTML(html string) string {
 
 	// return regGT.ReplaceAllString(regLT.ReplaceAllString(html, "&lt;"), "&gt;")
