@@ -185,6 +185,20 @@ func SafeAttrValue(tag, name, value string) string {
 }
 ```
 
+### 自定义属性值引用为单引号
+
+当`SingleQuotedAttributeValue`为false时默认为双引号，为true时则为单引号
+
+```golang
+options.SingleQuotedAttributeValue = true
+
+// 设置属性为true后，以下HTML
+// <a href="#">Hello</a>
+// 输出结果:
+// <a href='#'>Hello</a>
+```
+
+
 ### 自定义 CSS 过滤器
 
 TODO

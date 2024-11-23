@@ -3,8 +3,10 @@ package xss
 import (
 	// "errors"
 	// "bytes"
-	"github.com/feiin/pkg/arrays"
+	"fmt"
 	"strings"
+
+	"github.com/feiin/pkg/arrays"
 	// "io"
 )
 
@@ -102,6 +104,11 @@ func (x *Xss) Process(html string) string {
 	OnIgnoreTagAttr := x.options.OnIgnoreTagAttr
 	whiteList := x.options.WhiteList
 
+	attributeWrapSign := "\""
+	if x.options.SingleQuotedAttributeValue {
+		attributeWrapSign = "'"
+	}
+
 	//remove invisible characters
 	if x.options.StripBlankChar {
 		html = stripBlankChar(html)
@@ -164,7 +171,7 @@ func (x *Xss) Process(html string) string {
 				if isWhiteAttr {
 					value = safeAttrValue(tag, name, value)
 					if len(value) > 0 {
-						return name + "=\"" + value + "\""
+						return fmt.Sprintf("%s=%s%s%s", name, attributeWrapSign, value, attributeWrapSign) // name + "=\"" + value + "\""
 					} else {
 						return name
 					}

@@ -1506,3 +1506,31 @@ func TestOnTagSanitizeHtml(t *testing.T) {
 		t.Errorf("TestStripIngoreBodyTag4 error %s", html)
 	}
 }
+
+func TestSingleQuotedAttributeValue(t *testing.T) {
+	source := "<a title=\"xx\">single-quoted</a>"
+
+	html := FilterXSS(source, XssOption{SingleQuotedAttributeValue: false})
+
+	if html != "<a title=\"xx\">single-quoted</a>" {
+		t.Errorf("TestSingleQuotedAttributeValue expect: %s but:%s", source, html)
+
+	}
+
+	html = FilterXSS(source, XssOption{SingleQuotedAttributeValue: true})
+
+	expect := "<a title='xx'>single-quoted</a>"
+	if html != expect {
+		t.Errorf("TestSingleQuotedAttributeValue expect:%s  but:%s", expect, html)
+
+	}
+
+	source = "<a title='xx'>single-quoted</a>"
+
+	html = FilterXSS(source, XssOption{SingleQuotedAttributeValue: false})
+	expect = "<a title=\"xx\">single-quoted</a>"
+	if html != expect {
+		t.Errorf("TestSingleQuotedAttributeValue expect: %s but:%s", expect, html)
+
+	}
+}

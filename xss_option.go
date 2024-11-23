@@ -14,7 +14,8 @@ type XssOption struct {
 	// remove html comments
 	AllowCommentTag bool
 
-	StripIgnoreTag bool
+	StripIgnoreTag             bool
+	SingleQuotedAttributeValue bool
 
 	// StripIgnoreTagBody
 	StripIgnoreTagBody []string

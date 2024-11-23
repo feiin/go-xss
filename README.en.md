@@ -189,6 +189,17 @@ func SafeAttrValue(tag, name, value string) string {
 }
 ```
 
+### Customize output attribute value syntax for HTML
+By specifying a `SingleQuotedAttributeValue`. Use `true` for `'`. Otherwise default `"` will be used
+```golang
+options.SingleQuotedAttributeValue = true
+
+// With the configuration specified above, the following HTML:
+// <a href="#">Hello</a>
+// would become:
+// <a href='#'>Hello</a>
+```
+
 
 
 ### Quick Start
