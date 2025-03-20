@@ -72,9 +72,9 @@ func GetAttrs(html string) AttrResult {
 		}
 	}
 	html = strings.TrimSpace(html[i+1 : len(html)-1])
-	
+
 	var isClosing = false
-	if len(html) >= 0 {
+	if len(html) > 0 {
 		isClosing = html[len(html)-1] == '/'
 	}
 

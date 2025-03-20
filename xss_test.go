@@ -1329,6 +1329,17 @@ func TestOnIgnoreTagAttr(t *testing.T) {
 	}
 }
 
+// TestOnIgnoreWhiteListTagNullAttr 测试忽略tag 空属性
+func TestOnIgnoreWhiteListTagNullAttr(t *testing.T) {
+	source := "<a    >bb</a>"
+
+	html := FilterXSS(source, XssOption{WhiteList: GetDefaultWhiteList()})
+
+	if html != "<a>bb</a>" {
+		t.Errorf("TestOnIgnoreWhiteListTagNullAttr error")
+	}
+}
+
 func TestOnIgnoreTagAttrWithReturn(t *testing.T) {
 	source := "<a href=\"#\" target=\"_blank\" checked data-a=\"b\">hi</a href=\"d\">"
 
