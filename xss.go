@@ -62,6 +62,7 @@ type AttrResult struct {
 	Closing bool
 }
 
+// GetAttrs 获取标签属性
 func GetAttrs(html string) AttrResult {
 	i := spaceIndex(html)
 	if i == -1 {
@@ -72,7 +73,10 @@ func GetAttrs(html string) AttrResult {
 	}
 	html = strings.TrimSpace(html[i+1 : len(html)-1])
 
-	isClosing := html[len(html)-1] == '/'
+	var isClosing = false
+	if len(html) > 0 {
+		isClosing = html[len(html)-1] == '/'
+	}
 
 	if isClosing {
 		html = strings.TrimSpace(html[0 : len(html)-1])
